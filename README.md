@@ -43,7 +43,10 @@ src/
     brains/             scriptedBrain.js (a live brain can return behind the
                         same interface if ever needed)
   hooks/                useIsMobile (768px switch), useScrollToHash
-  pages/                Index, EngineTest, host homepage, fullPage/, messageBar/
+  pages/                Index, EngineTest, host homepage, and one folder per
+                        form factor: fullPage/ (host, chat page, PlansDrawer),
+                        messageBar/, chatWidget/
+  components/           Inherited homepage components (nav, footer, carousel)
   wireframe.css         Wireframe skin — remove the `wireframe` class in
                         index.html to go hifi
 ```
@@ -55,18 +58,31 @@ src/
 | `/` | Index — "Start demo" per form factor + build tools |
 | `/maze/full-page` (+`/chat`) | Full Page form factor |
 | `/maze/message-bar` | Floating Message Bar |
-| `/maze/chat-widget` | Chat Widget (Phase 5) |
+| `/maze/chat-widget` | Chat Widget |
 | `/maze/engine` | Bare-container engine demo |
 | `/homepage` | Pruned host homepage |
 
 Old non-maze paths (`/full-page`, `/message-bar`, …) redirect to the `/maze/*`
 equivalents.
 
+## Making common changes
+
+| To change… | Edit |
+|---|---|
+| Any conversation copy (greeting, script turns, CTA, disclosure, placeholder) | `src/data/guideScript.js` — never components |
+| Wireframe → hifi | Delete `class="wireframe"` from `index.html` |
+| Remove the provisional Turn 11b re-offer | `PROVISIONAL_RE_OFFER_ENABLED = false` in `guideScript.js` |
+| Anything shared by all three form factors (bubbles, gate card, typing, composer) | `src/engine/` — changes apply everywhere by design |
+| One form factor's container only | its folder under `src/pages/` |
+
+The engine is deliberately shared: the form factors differ *only* by container,
+which is what keeps the test to one variable. Resist adding a feature to one
+shell that the others don't have.
+
 ## Session workflow (between Claude Code sessions)
 
-- brief.md is the source of truth: phases complete, deviations, what's left.
-  Update it (and this README if anything structural changed) before ending a
-  session; commit and push.
-- Wireframe → hifi is one change: delete `class="wireframe"` from index.html.
-- All conversation copy lives in `src/data/guideScript.js`; legal copy is
-  placeholder pending Legal review.
+- brief.md is the source of truth: phase status, decisions and deviations, open
+  questions, what's left. Update it (and this README if anything structural
+  changed) before ending a session; commit and push.
+- Legal copy is placeholder pending Legal review — see the note at the top of
+  `guideScript.js` and the open items in brief.md.
