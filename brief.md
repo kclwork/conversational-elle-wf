@@ -113,9 +113,25 @@ content pending Trust & Safety, no UI.
   revisitable after it ends. Handoff CTA minimizes + scrolls host page to
   #plans (same pattern as the bar). Esc minimizes; body scroll locks behind
   the mobile sheet.
-- **Phase 6 — Maze readiness + deploy**: full script QA on all three /maze/*
-  routes both viewports, off-script never dead-ends, deploy to Vercel, verify
-  deep links on a real phone. NOT STARTED.
+- **Phase 6 — Maze readiness + deploy**: QA COMPLETE, DEPLOY BLOCKED ON AUTH.
+  - Script QA: 9 automated passes green — all 3 form factors × both gate
+    branches at 1440, plus all 3 at 390 (decline path). 27 assertions per
+    decline run / 25 per accept run: greeting on open, disclosure line, no
+    countdown UI, substantive turns, Turn 4 long answer, gate offer, gate card
+    geometry (input spans bubble width, chip centered), invalid-email inline
+    error + gate survives, correct branch line, conversation continues after
+    gate, verdict refusal, drafting refusal + soft heads-up, scope close,
+    handoff, single CTA present / old CTAs absent, re-offer matches branch
+    (decline only) + confirmation, composer disabled at end, zero network calls.
+  - Off-script: 12 assertions green — empty and whitespace-only ignored (no
+    dead-end, no phantom bubble); emoji, gibberish, markup, a 1,200-char input,
+    and on-script text sent out of order all advance; off-script text typed at
+    the gate declines and continues.
+  - Production build serves all deep links (200) via the SPA rewrite.
+  - git initialized, single commit `f94413f` on `main`, remote added.
+    **PUSH FAILED — GitHub rejects password auth; needs a token or credential
+    helper. Kaitlyn to authenticate (or push), then Vercel import + real-phone
+    deep-link check remain.**
 
 ## Open questions (parked, revisit with Kaitlyn)
 
