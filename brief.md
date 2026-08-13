@@ -128,10 +128,17 @@ content pending Trust & Safety, no UI.
     and on-script text sent out of order all advance; off-script text typed at
     the gate declines and continues.
   - Production build serves all deep links (200) via the SPA rewrite.
-  - git initialized, single commit `f94413f` on `main`, remote added.
-    **PUSH FAILED — GitHub rejects password auth; needs a token or credential
-    helper. Kaitlyn to authenticate (or push), then Vercel import + real-phone
-    deep-link check remain.**
+  - Pushed to GitHub (`main`), deployed to Vercel by Kaitlyn:
+    **https://conversational-elle-wf.vercel.app**
+  - Production verification (2026-08-13): all three `/maze/*` deep links resolve
+    cold via the SPA rewrite; zero failed resources; both variable fonts load;
+    wireframe class intact. Full scripted pass on Full Page (15/15 incl. gate
+    geometry, decline branch, refusals, heads-up, scope close, single CTA,
+    re-offer + confirmation, ends disabled, zero API calls); bar expands on
+    focus with greeting; widget runs to handoff, CTA minimizes + scrolls to
+    #plans, and the chat is revisitable afterward with history intact; mobile
+    390 widget opens as a true 100dvh sheet with scroll locked.
+  - REMAINING: Kaitlyn's own real-phone check (only step Claude can't do).
 
 ## Open questions (parked, revisit with Kaitlyn)
 

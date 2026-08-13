@@ -16,11 +16,16 @@ npm run dev
 Open http://localhost:5173 — the index page has a "Start demo" button per form
 factor. No environment variables needed.
 
-## Deploy to Vercel
+## Deployed
 
-1. Push to the GitHub repo and import it in Vercel (framework: Vite).
-2. `vercel.json` already rewrites all paths to `index.html` for client routing.
-3. Maze deep links are the `/maze/*` URLs on the deployed domain.
+**https://conversational-elle-wf.vercel.app** — Maze deep links:
+
+- `/maze/full-page`
+- `/maze/message-bar`
+- `/maze/chat-widget`
+
+Pushing to `main` triggers a redeploy. No environment variables; `vercel.json`
+rewrites all paths to `index.html` so the deep links resolve.
 
 ## File structure
 
