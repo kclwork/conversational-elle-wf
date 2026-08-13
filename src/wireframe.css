@@ -1,0 +1,59 @@
+/* ==========================================================================
+   WIREFRAME MODE — full greyscale skin
+   Toggled by the `wireframe` class on <html> (set in index.html).
+   Hifi switch = remove that one class. Nothing else changes.
+
+   Implementation note: we override the color tokens to greys instead of
+   putting `filter: grayscale(1)` on the app root, because a filter on an
+   ancestor breaks `position: fixed` descendants (the floating message bar
+   and chat widget bubble). The media filter below only touches img/svg/video,
+   which never contain fixed elements.
+
+   HIFI ACCENT HOOK: if Maze findability results demand a subtle accent on
+   Elle entry points, re-point --theme-accent-* (bottom of this file) at the
+   purple tokens — one identical change across all three form factors.
+   ========================================================================== */
+
+html.wireframe {
+  /* Base / Primary → greys */
+  --color-primary-purple: rgba(84, 87, 92, 1);        /* gray-800 */
+  --color-primary-light-purple: rgba(244, 244, 245, 1); /* gray-400 */
+
+  /* Base / Secondary → greys */
+  --color-secondary-green: rgba(84, 87, 92, 1);
+  --color-secondary-yellow: rgba(212, 213, 214, 1);
+  --color-secondary-bordeaux: rgba(84, 87, 92, 1);
+  --color-secondary-cream: rgba(247, 247, 248, 1);
+  --color-secondary-light-green: rgba(247, 247, 248, 1);
+
+  /* Base / Action → greys (filled buttons still read as buttons) */
+  --color-action-default: rgba(84, 87, 92, 1);
+  --color-action-hover: rgba(60, 63, 68, 1);
+  --color-action-active: rgba(41, 45, 51, 1);
+
+  /* Base / Status → greys */
+  --color-status-success: rgba(84, 87, 92, 1);
+  --color-status-success-subtle: rgba(247, 247, 248, 1);
+  --color-status-warning: rgba(212, 213, 214, 1);
+  --color-status-warning-subtle: rgba(247, 247, 248, 1);
+  --color-status-error: rgba(84, 87, 92, 1);
+  --color-status-error-subtle: rgba(247, 247, 248, 1);
+  --color-status-info: rgba(84, 87, 92, 1);
+  --color-status-info-subtle: rgba(247, 247, 248, 1);
+
+  /* Warm surfaces → cool greys */
+  --color-surface-warm-default: rgba(247, 247, 248, 1);
+  --color-surface-warm-hover: rgba(244, 244, 245, 1);
+  --color-surface-warm-subtle: rgba(244, 244, 245, 1);
+
+  /* Theme accents → greys (no colour hints anywhere, incl. Elle entry points) */
+  --theme-accent-primary-text: rgba(84, 87, 92, 1);
+  --theme-accent-subtle-bg: rgba(244, 244, 245, 1);
+}
+
+/* Photos, logos, and hardcoded-colour SVGs (e.g. the footer flag) go grey too */
+html.wireframe img,
+html.wireframe svg,
+html.wireframe video {
+  filter: grayscale(1);
+}

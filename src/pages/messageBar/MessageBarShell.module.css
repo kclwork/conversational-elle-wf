@@ -1,0 +1,222 @@
+/* Floating Message Bar container — Fin-style structure, Stratos tokens only.
+   The engine keeps its own DOM; the structural selectors below restyle its
+   two children (scroll area → panel body, composer area → floating pill)
+   without touching engine code. Engine root = .engineStack > div. */
+
+.dock {
+  position: fixed;
+  left: 50%;
+  bottom: var(--layout-spacing-md);
+  transform: translateX(-50%);
+  width: min(640px, calc(100vw - 2 * var(--layout-spacing-sm)));
+  z-index: 90; /* under the nav menus (100), over page content */
+  display: flex;
+  flex-direction: column;
+}
+
+/* ── Engine root: let the dock control layout ── */
+.engineStack {
+  display: flex;
+  flex-direction: column;
+  min-height: 0;
+}
+.engineStack > div {
+  background: transparent;
+  height: auto;
+  min-height: 0;
+}
+
+/* ── Panel header (shell chrome) ── */
+.panelHeader {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 12px var(--layout-spacing-sm);
+  background: var(--color-opacity-light-85);
+  backdrop-filter: blur(20px);
+  -webkit-backdrop-filter: blur(20px);
+  border: 1px solid var(--color-neutral-gray-400);
+  border-bottom: none;
+  border-radius: 16px 16px 0 0;
+}
+
+.panelTitle {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--layout-spacing-xs);
+  font-family: var(--font-secondary);
+  font-size: var(--type-paragraph-sm-size);
+  font-weight: var(--font-weight-medium);
+  color: var(--color-text-primary);
+}
+
+.aiBadge {
+  font-size: var(--type-paragraph-xs-size);
+  line-height: 1;
+  font-weight: var(--font-weight-medium);
+  color: var(--color-text-muted);
+  background: var(--color-neutral-gray-400);
+  border-radius: 4px;
+  padding: 3px 5px;
+}
+
+.minimize {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 28px;
+  height: 28px;
+  border-radius: var(--layout-border-radius-full);
+  color: var(--color-text-muted);
+}
+.minimize:hover {
+  background: var(--color-neutral-gray-400);
+  color: var(--color-text-primary);
+}
+
+/* ── Panel body = engine scroll area ── */
+.expanded .engineStack > div > div:first-child {
+  height: min(60vh, 560px);
+  flex: none;
+  background: var(--color-opacity-light-85);
+  backdrop-filter: blur(20px);
+  -webkit-backdrop-filter: blur(20px);
+  border: 1px solid var(--color-neutral-gray-400);
+  border-top: none;
+  border-radius: 0 0 16px 16px;
+  box-shadow: 0 24px 48px -12px var(--color-opacity-dark-20);
+}
+
+/* Rise-out-of-the-bar entrance */
+.expanded .panelHeader,
+.expanded .engineStack > div > div:first-child {
+  animation: rise 280ms ease-out;
+  transform-origin: bottom center;
+}
+
+@keyframes rise {
+  from { opacity: 0; transform: translateY(14px) scaleY(0.92); }
+  to   { opacity: 1; transform: translateY(0) scaleY(1); }
+}
+
+/* Collapsed: only the bar exists */
+.collapsed .panelHeader { display: none; }
+.collapsed .engineStack > div > div:first-child { display: none; }
+
+/* ── The bar = engine composer area, restyled as a floating pill ── */
+.engineStack > div > div:last-child {
+  background: transparent;
+  border-top: none;
+  padding: 0;
+}
+.expanded .engineStack > div > div:last-child {
+  margin-top: var(--layout-spacing-sm);
+}
+
+/* form → the pill */
+.engineStack > div > div:last-child form {
+  background: var(--color-surface-default);
+  border: 1px solid var(--color-textfield-border-default);
+  border-radius: var(--layout-border-radius-full);
+  box-shadow: 0 8px 24px -6px var(--color-opacity-dark-20);
+  padding: 6px 6px 6px 12px;
+  align-items: center;
+  transition: border-color 150ms ease, box-shadow 150ms ease;
+}
+/* focus state: lift */
+.engineStack > div > div:last-child form:focus-within {
+  border-color: var(--color-textfield-border-focus);
+  box-shadow: 0 12px 32px -6px var(--color-opacity-dark-20);
+}
+.engineStack > div > div:last-child form:hover {
+  border-color: var(--color-textfield-border-hover);
+}
+
+/* input inside the pill: chromeless */
+.engineStack > div > div:last-child form input {
+  border: none;
+  box-shadow: none;
+  background: transparent;
+  padding: 8px var(--layout-spacing-xs);
+}
+
+/* Ended conversation: the disabled input would swallow clicks — let them
+   through to the shell so tapping the bar re-opens the chat history. */
+.engineStack > div > div:last-child form input:disabled {
+  pointer-events: none;
+}
+
+/* send button: circular */
+.engineStack > div > div:last-child form button {
+  width: 40px;
+  height: 40px;
+  border-radius: var(--layout-border-radius-full);
+}
+
+/* disclosure line sits under the pill */
+.engineStack > div > div:last-child p {
+  margin-top: var(--layout-spacing-xs);
+}
+
+/* ── Mobile: full-screen sheet when expanded ── */
+@media (max-width: 767px) {
+  .dock.expanded {
+    left: 0;
+    bottom: 0;
+    transform: none;
+    width: 100vw;
+    height: 100dvh;
+    z-index: 120; /* above the mobile nav/menu */
+    background: var(--color-surface-default);
+    animation: sheetUp 260ms ease-out;
+  }
+
+  .dock.collapsed {
+    width: calc(100vw - 2 * var(--layout-spacing-sm));
+    bottom: var(--layout-spacing-sm);
+  }
+
+  @keyframes sheetUp {
+    from { transform: translateY(24px); opacity: 0; }
+    to   { transform: translateY(0); opacity: 1; }
+  }
+
+  .dock.expanded .panelHeader {
+    border: none;
+    border-bottom: 1px solid var(--color-neutral-gray-400);
+    border-radius: 0;
+    background: var(--color-surface-default);
+    backdrop-filter: none;
+    -webkit-backdrop-filter: none;
+    animation: none;
+  }
+
+  .dock.expanded .engineStack {
+    flex: 1;
+    min-height: 0;
+  }
+  .dock.expanded .engineStack > div {
+    height: 100%;
+  }
+  .dock.expanded .engineStack > div > div:first-child {
+    height: auto;
+    flex: 1;
+    background: var(--color-surface-default);
+    backdrop-filter: none;
+    -webkit-backdrop-filter: none;
+    border: none;
+    border-radius: 0;
+    box-shadow: none;
+    animation: none;
+  }
+
+  .dock.expanded .engineStack > div > div:last-child {
+    margin: 0;
+    padding: var(--layout-spacing-xs) var(--layout-spacing-sm) var(--layout-spacing-sm);
+    border-top: 1px solid var(--color-neutral-gray-400);
+    background: var(--color-surface-default);
+  }
+  .dock.expanded .engineStack > div > div:last-child form {
+    box-shadow: none;
+  }
+}

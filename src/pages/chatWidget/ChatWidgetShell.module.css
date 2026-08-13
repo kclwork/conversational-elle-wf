@@ -1,0 +1,138 @@
+/* Chat Widget container — Zendesk-style structure, Stratos tokens only.
+   Desktop: contained panel anchored bottom-right above the launcher bubble.
+   Mobile: full-screen sheet. The engine renders unmodified inside the panel
+   (its composer + disclosure live in the panel, per the widget references). */
+
+.bubble {
+  position: fixed;
+  right: var(--layout-spacing-md);
+  bottom: var(--layout-spacing-md);
+  z-index: 95;
+  width: 56px;
+  height: 56px;
+  border-radius: var(--layout-border-radius-full);
+  background: var(--color-action-secondary-default);
+  color: var(--color-text-inverse);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  box-shadow: 0 12px 28px -8px var(--color-opacity-dark-20);
+  transition: transform 150ms ease, background 150ms ease;
+}
+.bubble:hover {
+  background: var(--color-action-secondary-hover);
+  transform: scale(1.05);
+}
+
+.panel {
+  position: fixed;
+  right: var(--layout-spacing-md);
+  bottom: calc(var(--layout-spacing-md) + 56px + var(--layout-spacing-sm));
+  z-index: 90;
+  width: min(420px, calc(100vw - 2 * var(--layout-spacing-sm)));
+  height: min(70vh, 640px);
+  display: flex;
+  flex-direction: column;
+  background: var(--color-surface-default);
+  border: 1px solid var(--color-neutral-gray-400);
+  border-radius: 16px;
+  box-shadow: 0 24px 56px -12px var(--color-opacity-dark-20);
+  overflow: hidden;
+}
+
+.open {
+  animation: pop 220ms ease-out;
+  transform-origin: bottom right;
+}
+
+.closed {
+  display: none;
+}
+
+@keyframes pop {
+  from { opacity: 0; transform: translateY(10px) scale(0.97); }
+  to   { opacity: 1; transform: translateY(0) scale(1); }
+}
+
+.header {
+  flex-shrink: 0;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 12px var(--layout-spacing-sm);
+  border-bottom: 1px solid var(--color-neutral-gray-400);
+  background: var(--color-surface-subtle);
+}
+
+.title {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--layout-spacing-xs);
+  font-family: var(--font-secondary);
+  font-size: var(--type-paragraph-sm-size);
+  font-weight: var(--font-weight-medium);
+  color: var(--color-text-primary);
+}
+
+.aiBadge {
+  font-size: var(--type-paragraph-xs-size);
+  line-height: 1;
+  font-weight: var(--font-weight-medium);
+  color: var(--color-text-muted);
+  background: var(--color-neutral-gray-400);
+  border-radius: 4px;
+  padding: 3px 5px;
+}
+
+.minimize {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 28px;
+  height: 28px;
+  border-radius: var(--layout-border-radius-full);
+  color: var(--color-text-muted);
+}
+.minimize:hover {
+  background: var(--color-neutral-gray-400);
+  color: var(--color-text-primary);
+}
+
+.engineWrap {
+  flex: 1;
+  min-height: 0;
+  display: flex;
+  flex-direction: column;
+}
+.engineWrap > div {
+  flex: 1;
+  min-height: 0;
+  height: auto;
+}
+
+/* ── Mobile: full-screen sheet ── */
+@media (max-width: 767px) {
+  .panel {
+    right: 0;
+    bottom: 0;
+    width: 100vw;
+    height: 100dvh;
+    border: none;
+    border-radius: 0;
+    z-index: 120; /* above the mobile nav/menu */
+  }
+
+  .open {
+    animation: sheetUp 240ms ease-out;
+  }
+
+  @keyframes sheetUp {
+    from { transform: translateY(24px); opacity: 0; }
+    to   { transform: translateY(0); opacity: 1; }
+  }
+
+  /* The sheet covers the corner — hide the bubble while open */
+  .open ~ .bubble {
+    display: none;
+  }
+}

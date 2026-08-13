@@ -1,0 +1,147 @@
+.footer {
+  padding: 48px 28px 32px;
+  background: var(--color-neutral-black);
+  color: var(--color-text-inverse);
+  display: flex;
+  flex-direction: column;
+  gap: 40px;
+}
+
+.brand {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+.logoText {
+  font-family: var(--font-primary);
+  font-size: 28px;
+  letter-spacing: -0.8px;
+  color: var(--color-text-inverse);
+}
+
+.tagline {
+  font-family: var(--font-secondary);
+  font-size: var(--type-paragraph-sm-size);
+  line-height: var(--type-paragraph-sm-line-height);
+  color: var(--color-opacity-light-85);
+}
+
+.emailRow {
+  display: flex;
+  align-items: stretch;
+  background: var(--color-neutral-white);
+  border-radius: 9999px;
+  padding: 4px;
+}
+
+.emailInput {
+  flex: 1;
+  border: none;
+  background: transparent;
+  padding: 12px 14px;
+  min-height: 44px;
+  font-family: var(--font-secondary);
+  font-size: 14px;
+  color: var(--color-text-primary);
+  outline: none;
+}
+
+.emailBtn {
+  width: 44px;
+  height: 44px;
+  border-radius: 9999px;
+  background: var(--color-action-primary-default);
+  color: var(--color-text-inverse);
+  font-size: 16px;
+  flex-shrink: 0;
+}
+
+.columns {
+  display: flex;
+  flex-direction: column;
+  gap: 32px;
+}
+
+.col {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.colHeading {
+  font-family: var(--font-secondary);
+  font-size: var(--type-eyebrow-size);
+  font-weight: var(--font-weight-medium);
+  color: var(--color-text-inverse);
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+
+.colLinks {
+  list-style: none;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.colLink {
+  font-family: var(--font-secondary);
+  font-size: var(--type-paragraph-sm-size);
+  line-height: var(--type-paragraph-sm-line-height);
+  color: var(--color-opacity-light-85);
+  min-height: 24px;
+  display: inline-flex;
+  align-items: center;
+}
+
+.bottom {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+  padding-top: 24px;
+  border-top: 1px solid rgba(255, 255, 255, 0.12);
+}
+
+.country {
+  font-family: var(--font-secondary);
+  font-size: var(--type-paragraph-sm-size);
+  color: var(--color-opacity-light-85);
+}
+
+.appLabels {
+  display: flex;
+  gap: 16px;
+}
+
+.appLabels span {
+  font-family: var(--font-secondary);
+  font-size: var(--type-paragraph-sm-size);
+  color: var(--color-opacity-light-85);
+}
+
+.legal {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+  padding-top: 24px;
+  border-top: 1px solid rgba(255, 255, 255, 0.12);
+}
+
+.legalLinks {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px 14px;
+}
+
+.legalLinks span {
+  font-family: var(--font-secondary);
+  font-size: var(--type-paragraph-xs-size);
+  color: var(--color-opacity-light-85);
+}
+
+.copyright {
+  font-family: var(--font-secondary);
+  font-size: var(--type-paragraph-xs-size);
+  color: var(--color-opacity-light-50);
+}

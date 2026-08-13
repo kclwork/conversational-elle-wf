@@ -1,0 +1,170 @@
+/* Plans drawer — slide-over above the Full Page conversation.
+   Desktop: right drawer. Mobile: full-screen sheet. Stratos tokens only. */
+
+.scrim {
+  position: fixed;
+  inset: 0;
+  z-index: 200;
+  background: var(--color-overlay-scrim);
+  animation: scrimIn 200ms ease-out;
+}
+
+@keyframes scrimIn {
+  from { opacity: 0; }
+  to   { opacity: 1; }
+}
+
+.drawer {
+  position: absolute;
+  top: 0;
+  right: 0;
+  bottom: 0;
+  width: min(480px, 100vw);
+  background: var(--color-overlay-modal-bg);
+  display: flex;
+  flex-direction: column;
+  padding: var(--layout-spacing-md);
+  overflow-y: auto;
+  box-shadow: -24px 0 48px -12px var(--color-opacity-dark-20);
+  animation: slideIn 260ms ease-out;
+}
+
+@keyframes slideIn {
+  from { transform: translateX(48px); opacity: 0; }
+  to   { transform: translateX(0); opacity: 1; }
+}
+
+.head {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: var(--layout-spacing-sm);
+  margin-bottom: var(--layout-spacing-md);
+}
+
+.title {
+  font-family: var(--font-primary);
+  font-size: var(--type-h5-size);
+  line-height: var(--type-h5-line-height);
+  letter-spacing: var(--type-h5-letter-spacing);
+  font-weight: var(--font-weight-regular);
+  margin: 0;
+}
+.title em {
+  font-style: italic;
+}
+
+.close {
+  flex-shrink: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 36px;
+  height: 36px;
+  border-radius: var(--layout-border-radius-full);
+  color: var(--color-text-muted);
+}
+.close:hover {
+  background: var(--color-neutral-gray-400);
+  color: var(--color-text-primary);
+}
+
+.cards {
+  display: flex;
+  flex-direction: column;
+  gap: var(--layout-spacing-sm);
+}
+
+.card {
+  border: 1px solid var(--color-neutral-gray-400);
+  border-radius: 16px;
+  padding: var(--layout-spacing-md);
+  display: flex;
+  flex-direction: column;
+  gap: var(--layout-spacing-xs);
+  background: var(--color-surface-default);
+}
+
+.planName {
+  font-family: var(--font-secondary);
+  font-size: var(--type-paragraph-lg-size);
+  line-height: var(--type-paragraph-lg-line-height);
+  font-weight: var(--font-weight-medium);
+}
+
+.planDesc {
+  margin: 0;
+  color: var(--color-text-muted);
+  font-size: var(--type-paragraph-sm-size);
+  line-height: var(--type-paragraph-sm-line-height);
+}
+
+.planPrice {
+  font-family: var(--font-primary);
+  font-size: var(--type-h5-size);
+  line-height: var(--type-h5-line-height);
+  letter-spacing: var(--type-h5-letter-spacing);
+}
+.planPer {
+  font-size: var(--type-paragraph-sm-size);
+  letter-spacing: 0;
+  color: var(--color-text-muted);
+}
+
+.planContact {
+  font-family: var(--font-secondary);
+  font-size: var(--type-paragraph-size);
+  color: var(--color-text-muted);
+  padding: var(--layout-spacing-xs) 0;
+}
+
+.planCta,
+.planCtaSecondary {
+  margin-top: var(--layout-spacing-2xs);
+  font-family: var(--font-secondary);
+  font-size: var(--button-medium-font-size);
+  line-height: var(--button-medium-line-height);
+  font-weight: var(--button-medium-font-weight);
+  border-radius: var(--layout-border-radius-full);
+  padding: var(--button-medium-padding-v) var(--button-medium-padding-h);
+}
+
+.planCta {
+  background: var(--color-action-primary-default);
+  color: var(--color-text-inverse);
+}
+.planCta:hover { background: var(--color-action-primary-hover); }
+
+.planCtaSecondary {
+  background: var(--color-surface-default);
+  border: 1px solid var(--color-neutral-gray-900);
+  color: var(--color-neutral-gray-900);
+}
+.planCtaSecondary:hover {
+  background: var(--color-action-secondary-hover);
+  color: var(--color-text-inverse);
+}
+
+.backToChat {
+  margin-top: var(--layout-spacing-md);
+  align-self: center;
+  font-family: var(--font-secondary);
+  font-size: var(--type-paragraph-sm-size);
+  color: var(--color-text-primary);
+}
+.backToChat:hover {
+  text-decoration: underline;
+}
+
+/* Mobile: full-screen sheet */
+@media (max-width: 767px) {
+  .drawer {
+    width: 100vw;
+    animation: sheetIn 260ms ease-out;
+  }
+
+  @keyframes sheetIn {
+    from { transform: translateY(32px); opacity: 0; }
+    to   { transform: translateY(0); opacity: 1; }
+  }
+}

@@ -1,0 +1,79 @@
+/* Full Page conversation container — calm, focused, generous reading width.
+   Structure per the full-page reference; all styling from Stratos tokens. */
+
+.page {
+  height: 100vh;
+  height: 100dvh;
+  display: flex;
+  flex-direction: column;
+  background: var(--color-bg-subtle);
+}
+
+.header {
+  flex-shrink: 0;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: var(--layout-spacing-sm) var(--layout-spacing-md);
+  background: var(--color-nav-default);
+}
+
+.logo img {
+  height: 28px;
+  width: auto;
+}
+
+.back {
+  font-family: var(--font-secondary);
+  font-size: var(--type-paragraph-sm-size);
+  line-height: var(--type-paragraph-sm-line-height);
+  color: var(--color-text-muted);
+}
+.back:hover {
+  color: var(--color-text-primary);
+  text-decoration: underline;
+}
+
+.main {
+  flex: 1;
+  min-height: 0;
+  display: flex;
+  justify-content: center;
+  padding: 0 var(--layout-spacing-md);
+}
+
+/* Generous reading width — the Full Page advantage for long structured answers. */
+.column {
+  width: 100%;
+  max-width: 760px;
+  min-height: 0;
+  display: flex;
+  flex-direction: column;
+  padding: var(--layout-spacing-md) 0;
+}
+
+.column > * {
+  flex: 1;
+  min-height: 0;
+  border-radius: 16px;
+  border: 1px solid var(--color-neutral-gray-400);
+  overflow: hidden;
+}
+
+/* Mobile: the conversation takes the full canvas — no card framing. */
+@media (max-width: 767px) {
+  .main {
+    padding: 0;
+  }
+  .column {
+    max-width: none;
+    padding: 0;
+  }
+  .column > * {
+    border: none;
+    border-radius: 0;
+  }
+  .header {
+    padding: var(--layout-spacing-sm);
+  }
+}

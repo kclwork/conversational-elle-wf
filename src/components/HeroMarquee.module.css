@@ -1,0 +1,46 @@
+.marquee {
+  display: flex;
+  gap: 12px;
+  height: 520px;
+  overflow: hidden;
+  border-radius: 16px;
+}
+
+.col {
+  flex: 1;
+  overflow: hidden;
+  display: flex;
+  flex-direction: column;
+}
+
+.trackUp {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  animation: scrollUp 20s linear infinite;
+}
+
+.trackDown {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  animation: scrollDown 20s linear infinite;
+}
+
+.img {
+  width: 100%;
+  aspect-ratio: 3 / 4;
+  object-fit: cover;
+  border-radius: 12px;
+  flex-shrink: 0;
+}
+
+@keyframes scrollUp {
+  0% { transform: translateY(0); }
+  100% { transform: translateY(-50%); }
+}
+
+@keyframes scrollDown {
+  0% { transform: translateY(-50%); }
+  100% { transform: translateY(0); }
+}

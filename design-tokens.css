@@ -1,0 +1,216 @@
+/* ==========================================================================
+   Stratos Design System — Design Tokens
+   Font files must be in /public/fonts/ — see setup instructions above
+   ========================================================================== */
+
+/* ABC Otto — Variable Font */
+@font-face {
+  font-family: 'ABC Otto';
+  src: url('/fonts/ABCOtto-VF.woff2') format('woff2');
+  font-weight: 100 900;
+  font-style: normal;
+  font-display: swap;
+}
+@font-face {
+  font-family: 'ABC Otto';
+  src: url('/fonts/ABCOtto-Italic-VF.woff2') format('woff2');
+  font-weight: 100 900;
+  font-style: italic;
+  font-display: swap;
+}
+
+/* Instrument Rounded — Variable Font (covers all weights) */
+@font-face {
+  font-family: 'Instrument Rounded';
+  src: url('/fonts/InstrumentRounded-Variable.woff2') format('woff2');
+  font-weight: 100 900;
+  font-style: normal;
+  font-display: swap;
+}
+@font-face {
+  font-family: 'Instrument Rounded';
+  src: url('/fonts/InstrumentRounded-Italic-Variable.woff2') format('woff2');
+  font-weight: 100 900;
+  font-style: italic;
+  font-display: swap;
+}
+
+:root {
+
+  /* Base / Primary */
+  --color-primary-purple: rgba(105, 43, 238, 1);
+  --color-primary-light-purple: rgba(238, 241, 255, 1);
+
+  /* Base / Secondary */
+  --color-secondary-green: rgba(38, 64, 61, 1);
+  --color-secondary-yellow: rgba(251, 236, 162, 1);
+  --color-secondary-bordeaux: rgba(75, 39, 41, 1);
+  --color-secondary-cream: rgba(250, 237, 222, 1);
+  --color-secondary-light-green: rgba(238, 255, 242, 1);
+
+  /* Base / Neutral */
+  --color-neutral-white: rgba(255, 255, 255, 1);
+  --color-neutral-gray-100: rgba(254, 254, 253, 1);
+  --color-neutral-gray-200: rgba(250, 250, 251, 1);
+  --color-neutral-gray-300: rgba(247, 247, 248, 1);
+  --color-neutral-gray-400: rgba(244, 244, 245, 1);
+  --color-neutral-gray-500: rgba(212, 213, 214, 1);
+  --color-neutral-gray-600: rgba(148, 150, 153, 1);
+  --color-neutral-gray-700: rgba(116, 119, 122, 1);
+  --color-neutral-gray-800: rgba(84, 87, 92, 1);
+  --color-neutral-gray-900: rgba(41, 45, 51, 1);
+  --color-neutral-black: rgba(29, 28, 26, 1);
+  --color-neutral-warm-100: rgba(244, 242, 240, 1);
+  --color-neutral-warm-200: rgba(245, 244, 238, 1);
+
+  /* Base / Opacity */
+  --color-opacity-light-50: rgba(255, 255, 255, 0.5);
+  --color-opacity-light-85: rgba(251, 251, 251, 0.85);
+  --color-opacity-dark-5: rgba(41, 45, 51, 0.05);
+  --color-opacity-dark-20: rgba(41, 45, 51, 0.2);
+  --color-opacity-dark-80: rgba(41, 45, 51, 0.8);
+
+  /* Base / Action */
+  --color-action-default: rgba(105, 43, 238, 1);
+  --color-action-hover: rgba(88, 30, 212, 1);
+  --color-action-active: rgba(74, 22, 184, 1);
+  --color-action-disabled: rgba(169, 171, 173, 1);
+
+  /* Base / Status */
+  --color-status-success: rgba(33, 150, 83, 1);
+  --color-status-success-subtle: rgba(239, 251, 242, 1);
+  --color-status-warning: rgba(255, 214, 10, 1);
+  --color-status-warning-subtle: rgba(255, 252, 235, 1);
+  --color-status-error: rgba(215, 0, 21, 1);
+  --color-status-error-subtle: rgba(255, 235, 237, 1);
+  --color-status-info: rgba(53, 89, 233, 1);
+  --color-status-info-subtle: rgba(237, 240, 253, 1);
+
+  /* Semantic: Background */
+  --color-bg-page: var(--color-neutral-white);
+  --color-bg-section: var(--color-neutral-white);
+  --color-bg-subtle: var(--color-neutral-gray-100);
+  --color-bg-disabled: var(--color-neutral-gray-400);
+
+  /* Semantic: Surface */
+  --color-surface-default: var(--color-neutral-white);
+  --color-surface-subtle: var(--color-neutral-gray-100);
+  --color-surface-muted: var(--color-neutral-gray-400);
+  --color-surface-inverse: var(--color-neutral-black);
+  --color-surface-warm-default: var(--color-neutral-warm-200);
+  --color-surface-warm-hover: rgba(247, 246, 241, 1);
+  --color-surface-warm-subtle: var(--color-neutral-warm-100);
+
+  /* Semantic: Text */
+  --color-text-primary: var(--color-neutral-gray-900);
+  --color-text-muted: var(--color-neutral-gray-700);
+  --color-text-disabled: var(--color-action-disabled);
+  --color-text-inverse: var(--color-neutral-white);
+
+  /* Semantic: Border */
+  --color-border-default: var(--color-neutral-gray-500);
+  --color-border-hover: var(--color-neutral-gray-700);
+  --color-border-strong: var(--color-neutral-gray-900);
+
+  /* Semantic: Accent */
+  --color-accent-primary-text: var(--color-primary-purple);
+  --color-accent-subtle-bg: var(--color-primary-light-purple);
+
+  /* Semantic: Action / Primary */
+  --color-action-primary-default: var(--color-action-default);
+  --color-action-primary-hover: var(--color-action-hover);
+  --color-action-primary-active: var(--color-action-active);
+  --color-action-primary-disabled: var(--color-action-disabled);
+
+  /* Semantic: Action / Secondary */
+  --color-action-secondary-default: var(--color-neutral-gray-900);
+  --color-action-secondary-hover: rgba(50, 56, 67, 1);
+  --color-action-secondary-active: rgba(37, 40, 46, 1);
+  --color-action-secondary-disabled: var(--color-action-disabled);
+
+  /* Semantic: Overlay */
+  --color-overlay-scrim: rgba(0, 0, 0, 0.5);
+  --color-overlay-modal-bg: var(--color-neutral-white);
+
+  /* Semantic: Text Field */
+  --color-textfield-text: var(--color-text-primary);
+  --color-textfield-placeholder: var(--color-text-muted);
+  --color-textfield-bg: var(--color-neutral-white);
+  --color-textfield-border-default: var(--color-border-default);
+  --color-textfield-border-hover: var(--color-border-hover);
+  --color-textfield-border-focus: var(--color-border-strong);
+  --color-textfield-border-error: var(--color-status-error);
+  --color-textfield-disabled: var(--color-text-disabled);
+  --color-textfield-disabled-bg: var(--color-bg-disabled);
+
+  /* Semantic: Navigation */
+  --color-nav-default: var(--color-neutral-gray-100);
+  --color-nav-scroll: rgba(251, 251, 251, 0.85);
+  --color-nav-utility-bar: var(--color-neutral-gray-400);
+
+  /* Layout: Section margins */
+  --layout-section-margin-2xs: 16px;
+  --layout-section-margin-xs: 24px;
+  --layout-section-margin-sm: 32px;
+  --layout-section-margin-md: 48px;
+  --layout-section-margin-lg: 64px;
+  --layout-section-margin-xl: 80px;
+  --layout-section-margin-2xl: 120px;
+
+  /* Layout: Spacing */
+  --layout-spacing-2xs: 4px;
+  --layout-spacing-xs: 8px;
+  --layout-spacing-sm: 16px;
+  --layout-spacing-md: 24px;
+  --layout-spacing-lg: 32px;
+  --layout-spacing-xl: 48px;
+  --layout-spacing-2xl: 56px;
+
+  /* Layout: Border radius */
+  --layout-border-radius-full: 9999px;
+
+  /* Button tokens */
+  --button-large-font-size: 16px;
+  --button-large-line-height: 24px;
+  --button-large-font-weight: 500;
+  --button-large-padding-v: 16px;
+  --button-large-padding-h: 24px;
+  --button-medium-font-size: 14px;
+  --button-medium-line-height: 21px;
+  --button-medium-font-weight: 500;
+  --button-medium-padding-v: 13.5px;
+  --button-medium-padding-h: 24px;
+  --button-chip-font-size: 14px;
+  --button-chip-line-height: 29.4px;
+  --button-chip-font-weight: 500;
+  --button-chip-padding-v: 14px;
+  --button-chip-padding-h: 16px;
+
+  /* Typography: Font families */
+  /* Font files live in /public/fonts/ — see setup instructions below */
+  --font-primary: 'ABC Otto', sans-serif;
+  --font-secondary: 'Instrument Rounded', sans-serif;
+
+  /* Typography: Font weights */
+  --font-weight-light: 300;
+  --font-weight-regular: 400;
+  --font-weight-medium: 500;
+  --font-weight-semibold: 600;
+
+  /* H1 */ --type-h1-size: 72px; --type-h1-line-height: 72px; --type-h1-letter-spacing: -3.6px;
+  /* H2 */ --type-h2-size: 56px; --type-h2-line-height: 56px; --type-h2-letter-spacing: -2.8px;
+  /* H3 */ --type-h3-size: 48px; --type-h3-line-height: 50.4px; --type-h3-letter-spacing: -1.92px;
+  /* H4 */ --type-h4-size: 40px; --type-h4-line-height: 44px; --type-h4-letter-spacing: -1.2px;
+  /* H5 */ --type-h5-size: 32px; --type-h5-line-height: 35.2px; --type-h5-letter-spacing: -0.96px;
+  /* H6 */ --type-h6-size: 24px; --type-h6-line-height: 28.8px; --type-h6-letter-spacing: 0;
+  /* Paragraph XL */ --type-paragraph-xl-size: 22px; --type-paragraph-xl-line-height: 33px;
+  /* Paragraph LG */ --type-paragraph-lg-size: 18px; --type-paragraph-lg-line-height: 27px;
+  /* Paragraph Body */ --type-paragraph-size: 16px; --type-paragraph-line-height: 24px;
+  /* Paragraph SM */ --type-paragraph-sm-size: 14px; --type-paragraph-sm-line-height: 21px;
+  /* Paragraph XS */ --type-paragraph-xs-size: 12px; --type-paragraph-xs-line-height: 18px;
+  /* Eyebrow */ --type-eyebrow-size: 16px; --type-eyebrow-line-height: 24px; --type-eyebrow-weight: 500;
+
+  /* Theme */
+  --theme-accent-primary-text: var(--color-primary-purple);
+  --theme-accent-subtle-bg: var(--color-primary-light-purple);
+}

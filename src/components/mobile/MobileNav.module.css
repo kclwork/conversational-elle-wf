@@ -1,0 +1,39 @@
+.nav {
+  position: sticky;
+  top: 0;
+  z-index: 50;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 14px 28px;
+  background: var(--color-nav-default);
+  border-bottom: 1px solid var(--color-opacity-dark-5);
+}
+
+.logo {
+  display: inline-flex;
+  align-items: center;
+  min-height: 44px;
+  min-width: 44px;
+  padding: 6px 0;
+}
+
+.logo img {
+  height: 24px;
+  width: auto;
+}
+
+.menuBtn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 44px;
+  height: 44px;
+  color: var(--color-neutral-black);
+  background: transparent;
+  border-radius: 8px;
+}
+
+.menuBtn:active {
+  background: var(--color-opacity-dark-5);
+}
