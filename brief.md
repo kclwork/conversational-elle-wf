@@ -145,6 +145,7 @@ reachable in all three):
 | 7 — Hifi (Stratos) exposure | Message Bar surfaced at `/maze/hifi/message-bar` |
 | 8 — Gate → wall (Leann) | Decline chip + Turn 11b re-offer removed; email required to continue |
 | 9 — Hifi polish + Zoom widget | Bubble/AI-badge colour pass, DS-compliant invalid-email state, static Zoom/TalkDesk widget on the hifi route |
+| 10 — Wider expanded panel (Leann) | Desktop panel widens 640 → 800 on expand; pill stays 640 |
 
 **Phase 7 — Hifi Stratos DS exposure.** Team selected the Floating Message Bar
 as the direction, so we added a hifi surface for it *without touching* the three
@@ -238,6 +239,18 @@ Files touched:
 - `src/pages/messageBar/MessageBarShell.module.css` — AI badge colour swap
 - `src/pages/messageBar/ZoomWidgetPlaceholder.jsx` + `.module.css` — NEW
 - `src/pages/messageBar/HifiMessageBarRoute.jsx` — renders the placeholder
+
+**Phase 10 — Wider expanded panel (Leann, 2026-08-20).** Long Elle responses
+were feeling cramped in the desktop panel. Widened the panel from 640 → 800px
+when expanded (measured against the same Colorado deposit script — Turn 2's
+wear-and-tear explanation), keeping the resting composer pill at 640px so the
+bar itself doesn't change shape. Done in `MessageBarShell.module.css`: `.dock`
+gains a 240ms width transition; `.dock.expanded` under `min-width: 768px`
+widens to `min(800px, calc(100vw - 32px))`; the composer area
+(`.expanded .engineStack > div > div:last-child`) is pinned to `width: 640px;
+align-self: center` on desktop so the pill stays 640 centered inside the wider
+dock. Mobile untouched (still `100vw × 100dvh` sheet). Applies to both the
+wireframe and hifi message-bar routes — same shell.
 
 **Phase 1 —** Traced imports, removed doc-review pages/CTAs (Nav +
 MobileMenuOverlay), cut MobileFunnelSections (doc-review funnel), added

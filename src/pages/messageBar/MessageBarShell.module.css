@@ -12,6 +12,20 @@
   z-index: 90; /* under the nav menus (100), over page content */
   display: flex;
   flex-direction: column;
+  transition: width 240ms ease-out;
+}
+
+/* Desktop: when the panel opens, the dock widens so long Elle responses have
+   more room; the composer pill inside is pinned back to 640px so the resting
+   bar stays the same length either way. */
+@media (min-width: 768px) {
+  .dock.expanded {
+    width: min(800px, calc(100vw - 2 * var(--layout-spacing-sm)));
+  }
+  .expanded .engineStack > div > div:last-child {
+    width: 640px;
+    align-self: center;
+  }
 }
 
 /* ── Engine root: let the dock control layout ── */
