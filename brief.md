@@ -9,7 +9,9 @@ plain-language) — Decision 2, form factor test. One variable per test: voice,
 conversation content, and entry aids are identical across all three form factors.
 Only the container changes.
 
-**Status: all 6 phases built, QA'd, and deployed.**
+**Status: Phases 1–9 built and deployed. Phases 1–6 QA'd. Phases 7–9 verified
+locally; no formal QA re-run yet (Phase 6's decline-branch assertions no longer
+apply — see Phase 8).**
 Live: **https://conversational-elle-wf.vercel.app**
 Repo: https://github.com/kclwork/conversational-elle-wf
 
@@ -68,27 +70,30 @@ vercel.json                   SPA rewrite (makes /maze/* deep links resolve)
 public/fonts, public/images   variable fonts + homepage imagery
 src/
   data/guideScript.js         THE script + ALL shared copy (greeting, disclosure,
-                              placeholder, gate labels, CTA) +
-                              PROVISIONAL_RE_OFFER_ENABLED flag
+                              placeholder, gate label, handoff CTA)
   engine/
     ConversationEngine.jsx    the conversation UI (identical everywhere)
-    useConversation.js        state machine (gate/re-offer/typing/ended)
+    useConversation.js        state machine (gate/typing/ended)
     MessageBlocks.jsx         block + inline **bold** renderer
     engine.module.css         bubbles, typing dots, gate card, CTAs, composer
-    brains/scriptedBrain.js   playback + branch resolution
+    brains/scriptedBrain.js   linear playback (gate is a wall since Phase 8)
   pages/
-    IndexPage                 "Start demo" per form factor
+    IndexPage                 "Start demo" per form factor + hifi surface
     ResponsiveHomepage        host homepage (desktop/mobile switch)
     Homepage, mobile/MobileHomepage   pruned host pages
     fullPage/FullPageHost     homepage + nav/menu Elle CTA
     fullPage/FullPageChat     dedicated chat page (760px reading column)
     fullPage/PlansDrawer      handoff drawer over the chat
-    messageBar/MessageBarShell    Fin-style floating bar
-    chatWidget/ChatWidgetShell    Zendesk-style bubble + panel
+    messageBar/MessageBarShell        Fin-style floating bar (wireframe route)
+    messageBar/HifiMessageBarRoute    wraps the shell for `/maze/hifi/*`; toggles the wireframe class + renders the Zoom widget placeholder
+    messageBar/ZoomWidgetPlaceholder  static Zoom/TalkDesk mock (hifi only, non-interactive)
+    chatWidget/ChatWidgetShell        Zendesk-style bubble + panel
     EngineTest                bare-container engine demo
   components/                 inherited homepage components (nav, footer, etc.)
   hooks/                      useIsMobile (768px), useScrollToHash
-  wireframe.css               the greyscale skin + hifi accent hook
+  wireframe.css               greyscale skin + bubble-token pins (keeps the
+                              wireframe user/elle bubble pair distinct in
+                              wireframe when hifi uses light-purple/warm-100)
 ```
 
 ## Conversation flow (User Flow v2 — locked)
@@ -240,10 +245,11 @@ wireframe mode, scaffolded Vite (package.json/index.html/vite.config were
 missing from the copy), copied homepage images from the doc-review project,
 made the homepage viewport-responsive.
 
-**Phase 2 —** Engine: message list, typing indicator (~1–1.5s), gate with real
-accept/decline branches + inline error state, heads-up, scope close, handoff
-CTA, provisional re-offer + accept confirmation, disclosure line, opening
-greeting. guideScript.js with Leann's verbatim turns. Index route. Live mode was
+**Phase 2 —** Engine: message list, typing indicator (~1–1.5s), gate with
+accept/decline branches + inline error state (both decline path and the
+provisional re-offer were later removed in Phase 8 — the gate is now a wall),
+heads-up, scope close, handoff CTA, disclosure line, opening greeting.
+guideScript.js with Leann's verbatim turns. Index route. Live mode was
 originally built here (serverless `/api/chat` + Leann's prompt + turn-budget
 injection) and later removed — see Architecture.
 
@@ -270,20 +276,24 @@ mobile = full-screen 100dvh sheet (consistent with the bar). Launcher bubble
 bottom-right (morphs to a chevron while open); slim Elle header + minimize;
 engine's own composer + disclosure inside the panel per the references.
 
-**Phase 6 — QA + deploy.**
-- Script QA: 9 automated passes green — all 3 form factors × both gate branches
-  at 1440, plus all 3 at 390 (decline path). 27 assertions per decline run / 25
-  per accept run: greeting on open, disclosure line, no countdown UI, substantive
-  turns, Turn 4 long answer, gate offer, gate card geometry (input spans bubble
-  width, chip centered), invalid-email inline error + gate survives, correct
-  branch line, conversation continues after gate, verdict refusal, drafting
-  refusal + soft heads-up, scope close, handoff, single CTA present / old CTAs
-  absent, re-offer matches branch (decline only) + confirmation, composer
-  disabled at end, zero network calls.
-- Off-script: 12 assertions green — empty and whitespace-only ignored (no
-  dead-end, no phantom bubble); emoji, gibberish, markup, a 1,200-char input,
-  and on-script text sent out of order all advance; off-script text typed at the
-  gate declines and continues.
+**Phase 6 — QA + deploy** (historical — several assertions were invalidated by
+Phase 8's "gate becomes a wall" change; the ACCEPT-path passes still hold, the
+decline-path and re-offer assertions no longer apply).
+- Script QA (as of 2026-08-13): 9 automated passes green — all 3 form factors ×
+  both gate branches at 1440, plus all 3 at 390 (decline path). 27 assertions
+  per decline run / 25 per accept run: greeting on open, disclosure line, no
+  countdown UI, substantive turns, Turn 4 long answer, gate offer, gate card
+  geometry, invalid-email inline error + gate survives, correct branch line,
+  conversation continues after gate, verdict refusal, drafting refusal + soft
+  heads-up, scope close, handoff, single CTA present / old CTAs absent,
+  re-offer matches branch (decline only) + confirmation, composer disabled at
+  end, zero network calls.
+- Off-script (as of 2026-08-13): 12 assertions green — empty and
+  whitespace-only ignored (no dead-end, no phantom bubble); emoji, gibberish,
+  markup, a 1,200-char input, and on-script text sent out of order all
+  advance; off-script text typed at the gate declines and continues (this
+  last case no longer applies — decline path removed in Phase 8; gate now
+  holds until a valid email is submitted).
 - Production verification (2026-08-13, live Vercel build): all three `/maze/*`
   deep links resolve cold via the SPA rewrite; zero failed resources; both
   variable fonts load; wireframe class intact. Full scripted pass on Full Page
@@ -305,11 +315,17 @@ engine's own composer + disclosure inside the panel per the references.
 
 **Copy pending review (all marked placeholder in code):**
 - Elle's opening greeting (`OPENING_MESSAGE` in guideScript.js)
-- Turn 11b accept confirmation line
 - The single handoff CTA "Subscribe to speak to a lawyer" — **this overrode the
   Turn 11 [LEANN VERBATIM] two-CTA line ("See plans" / "Talk to an attorney").
   Worth reconciling with Leann.**
 - All legal content (per the file-top comment) pending Legal review
+
+**Open items added this session (2026-08-20):**
+- Phase 6 QA re-run against the wall gate (accept-only path, no decline
+  assertions, no re-offer). See the note in Phase 6.
+- If the Zoom/TalkDesk widget's exact production hex or icon asset is available,
+  swap into `ZoomWidgetPlaceholder` — currently using `#2C1178` and an inline
+  chat-bubble SVG (eyeballed from Kaitlyn's reference).
 
 **Verification Claude can't do:**
 - Real-phone pass on the three `/maze/*` links (iOS Safari dynamic viewport vs.

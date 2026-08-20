@@ -42,17 +42,18 @@ public/fonts/           ABC Otto + Instrument Rounded (variable fonts)
 public/images/          Homepage imagery
 src/
   data/guideScript.js   THE Maze script + all shared copy (edit copy here,
-                        never in components); PROVISIONAL_RE_OFFER_ENABLED flag
+                        never in components)
   engine/               Conversation engine (UI + state), brain-agnostic
-    brains/             scriptedBrain.js (a live brain can return behind the
-                        same interface if ever needed)
+    brains/             scriptedBrain.js — linear playback (gate is a wall)
   hooks/                useIsMobile (768px switch), useScrollToHash
   pages/                Index, EngineTest, host homepage, and one folder per
                         form factor: fullPage/ (host, chat page, PlansDrawer),
-                        messageBar/, chatWidget/
+                        messageBar/ (shell + HifiMessageBarRoute +
+                        ZoomWidgetPlaceholder), chatWidget/
   components/           Inherited homepage components (nav, footer, carousel)
   wireframe.css         Wireframe skin — remove the `wireframe` class in
-                        index.html to go hifi
+                        index.html to go hifi (or use `/maze/hifi/*` which
+                        toggles it per-route)
 ```
 
 ## Routes
