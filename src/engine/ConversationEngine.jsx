@@ -10,7 +10,6 @@ import MessageBlocks from './MessageBlocks.jsx'
 import {
   DISCLOSURE_TEXT,
   INPUT_PLACEHOLDER,
-  GATE_DECLINE_LABEL,
   GATE_EMAIL_PLACEHOLDER,
 } from '../data/guideScript.js'
 import styles from './engine.module.css'
@@ -25,7 +24,7 @@ function TypingIndicator() {
   )
 }
 
-function GateCard({ onAccept, onDecline }) {
+function GateCard({ onAccept }) {
   const [email, setEmail] = useState('')
   const [invalid, setInvalid] = useState(false)
 
@@ -37,7 +36,7 @@ function GateCard({ onAccept, onDecline }) {
 
   return (
     <div className={styles.gateCard}>
-      <form className={styles.gateForm} onSubmit={submit}>
+      <form className={styles.gateForm} onSubmit={submit} noValidate>
         <input
           type="email"
           className={`${styles.gateInput} ${invalid ? styles.gateInputError : ''}`}
@@ -49,9 +48,6 @@ function GateCard({ onAccept, onDecline }) {
         <button type="submit" className={styles.gateSend} aria-label="Send summary">→</button>
       </form>
       {invalid && <p className={styles.gateError}>ⓘ Please enter a valid email address</p>}
-      <button type="button" className={styles.gateDecline} onClick={onDecline}>
-        {GATE_DECLINE_LABEL}
-      </button>
     </div>
   )
 }
@@ -71,7 +67,7 @@ export default function ConversationEngine({ brain, onCta }) {
   useEffect(() => {
     const el = scrollRef.current
     if (el) el.scrollTop = el.scrollHeight
-  }, [convo.messages, convo.typing, convo.gateOpen, convo.reOfferOpen])
+  }, [convo.messages, convo.typing, convo.gateOpen])
 
   function submit(e) {
     e.preventDefault()
@@ -80,7 +76,9 @@ export default function ConversationEngine({ brain, onCta }) {
     setDraft('')
   }
 
-  const showGateCard = convo.gateOpen || convo.reOfferOpen
+  // Composer is disabled while the gate is open — the gate is a wall, so the
+  // only way forward is the inline email field on the gate card.
+  const composerDisabled = convo.ended || convo.gateOpen
 
   return (
     <div className={styles.engine}>
@@ -110,9 +108,9 @@ export default function ConversationEngine({ brain, onCta }) {
 
           {convo.typing && <div className={styles.elleRow}><TypingIndicator /></div>}
 
-          {showGateCard && !convo.typing && (
+          {convo.gateOpen && !convo.typing && (
             <div className={styles.elleRow}>
-              <GateCard onAccept={convo.acceptGate} onDecline={convo.declineGate} />
+              <GateCard onAccept={convo.acceptGate} />
             </div>
           )}
         </div>
@@ -126,13 +124,13 @@ export default function ConversationEngine({ brain, onCta }) {
             placeholder={INPUT_PLACEHOLDER}
             value={draft}
             onChange={e => setDraft(e.target.value)}
-            disabled={convo.ended}
+            disabled={composerDisabled}
             aria-label="Message Elle"
           />
           <button
             type="submit"
             className={styles.send}
-            disabled={convo.ended || !draft.trim()}
+            disabled={composerDisabled || !draft.trim()}
             aria-label="Send message"
           >
             →

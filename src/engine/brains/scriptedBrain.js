@@ -4,26 +4,24 @@
 //
 // Brain interface (the engine talks only to this; a live/API brain can be
 // re-added behind the same interface if the prototype ever needs one):
-//   brain.send(input) -> Promise<{ messages, gate, reOffer, ended }>
-//     input: { type: 'text', text } | { type: 'gateAccept' } | { type: 'gateDecline' }
+//   brain.send(input) -> Promise<{ messages, gate, ended }>
+//     input:    { type: 'text', text } | { type: 'gateAccept' }
 //     messages: [{ blocks, moments }]  — Elle messages to play back
-//     gate:    true when the UI should show the inline email/decline choice
-//     reOffer: true when the provisional re-offer input should show (Turn 11b)
-//     ended:   true when the conversation has reached its end state
+//     gate:     true when the UI should show the inline email field (a wall — the
+//               conversation cannot continue until a valid email is submitted)
+//     ended:    true when the conversation has reached its end state
 
-import { guideScript, PROVISIONAL_RE_OFFER_ENABLED } from '../../data/guideScript.js'
+import { guideScript } from '../../data/guideScript.js'
 
 export function createScriptedBrain() {
   // Pointer into the ordered turn array. Forgiving by design: ANY typed input
-  // advances the script — nobody ever gets stuck at a dead input.
+  // advances the script — nobody ever gets stuck at a dead input (except at the
+  // gate, which is a wall by design and requires a valid email).
   let index = 0
-  let gateChoice = null // 'gateAccepted' | 'gateDeclined'
-  let awaiting = null // 'gate' | 'reOffer' — which choice the UI is showing
 
   function collectElleTurns() {
     const messages = []
     let gate = false
-    let reOffer = false
     let ended = false
 
     while (index < guideScript.length) {
@@ -31,66 +29,30 @@ export function createScriptedBrain() {
 
       if (turn.role === 'user') break // wait for the participant's next input
 
-      // Provisional re-offer: only on the declined path, only while enabled.
-      if (turn.provisional) {
-        if (!PROVISIONAL_RE_OFFER_ENABLED || gateChoice !== turn.onlyIf) {
-          index += 1
-          continue
-        }
-        messages.push({ blocks: turn.blocks, moments: turn.moments || [] })
-        reOffer = true
-        awaiting = 'reOffer'
-        index += 1
-        continue
-      }
-
-      // Branch turn (the gate response) — resolved by gateChoice.
-      if (turn.branches) {
-        const branch = turn.branches[gateChoice] || turn.branches.gateDeclined
-        messages.push({ blocks: branch.blocks, moments: [] })
-        index += 1
-        continue
-      }
-
       const moments = turn.moments || []
       messages.push({ blocks: turn.blocks, moments })
 
       index += 1
 
       // A gate moment pauses playback: the next thing the engine shows is the
-      // email/decline choice, and the branch turn plays after the choice.
+      // email field. The post-gate line plays once a valid email is submitted.
       if (moments.includes('gate')) {
         gate = true
-        awaiting = 'gate'
         break
       }
     }
 
-    // End state: nothing left to play after the handoff (and re-offer, if shown).
-    if (index >= guideScript.length && !gate && !reOffer) ended = true
+    // End state: nothing left to play after the handoff.
+    if (index >= guideScript.length && !gate) ended = true
 
-    return { messages, gate, reOffer, ended }
+    return { messages, gate, ended }
   }
 
   return {
     mode: 'scripted',
 
     async send(input) {
-      if (input.type === 'gateAccept' || input.type === 'gateDecline') {
-        // Re-offer choice (Turn 11b): accept plays the confirmation line;
-        // either way, the conversation ends at the handoff state.
-        if (awaiting === 'reOffer') {
-          awaiting = null
-          const reOfferTurn = guideScript.find(t => t.provisional)
-          const messages =
-            input.type === 'gateAccept' && reOfferTurn?.acceptConfirmation
-              ? [{ blocks: reOfferTurn.acceptConfirmation.blocks, moments: [] }]
-              : []
-          return { messages, gate: false, reOffer: false, ended: true }
-        }
-
-        awaiting = null
-        gateChoice = input.type === 'gateAccept' ? 'gateAccepted' : 'gateDeclined'
+      if (input.type === 'gateAccept') {
         return collectElleTurns()
       }
 

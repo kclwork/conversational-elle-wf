@@ -38,9 +38,10 @@ Repo: https://github.com/kclwork/conversational-elle-wf
 | Route | What it is |
 |---|---|
 | `/` | Index — "Start demo" per form factor + build tools |
-| `/maze/full-page` (+ `/chat`) | Full Page form factor |
-| `/maze/message-bar` | Floating Message Bar |
-| `/maze/chat-widget` | Chat Widget |
+| `/maze/full-page` (+ `/chat`) | Full Page form factor (wireframe) |
+| `/maze/message-bar` | Floating Message Bar (wireframe) |
+| `/maze/chat-widget` | Chat Widget (wireframe) |
+| `/maze/hifi/message-bar` | **Hifi Floating Message Bar (Stratos DS)** — team-selected direction |
 | `/maze/engine` | Bare-container engine demo (build tool) |
 | `/homepage` | Pruned host homepage (`#plans` = pricing anchor) |
 
@@ -93,13 +94,12 @@ src/
 ## Conversation flow (User Flow v2 — locked)
 
 Entry (session 1 ungated) → first exchange (greeting: Elle narrates the deal) →
-loop → gate offer at turn 2–3 (summary + attorney questions emailed; an offer,
-never a toll; accept AND decline visibly continue) → soft heads-up (~2
-substantive responses left, inside Turn 9 copy — never a visible counter) →
-scope close (+ ONE provisional re-offer if the gate was declined;
-`PROVISIONAL_RE_OFFER_ENABLED` in guideScript.js is the one-line removal) →
-handoff (single CTA: "Subscribe to speak to a lawyer"). Safety escalation is a
-reserved engine state, content pending Trust & Safety, no UI.
+loop → **email gate (wall) at turn 2–3** (Leann, 2026-08-20: capturing the email
+is the point of the interaction; a valid email is required to continue) → soft
+heads-up (~2 substantive responses left, inside Turn 9 copy — never a visible
+counter) → scope close → handoff (single CTA: "Subscribe to speak to a
+lawyer"). Safety escalation is a reserved engine state, content pending Trust
+& Safety, no UI.
 
 **Handoff behavior differs by container by design** (the conversation must stay
 reachable in all three):
@@ -114,10 +114,13 @@ reachable in all three):
   No per-form-factor content, entry aids, or copy differences. No suggestion chips.
 - Both viewports in every phase. A form factor is not done until both work.
 - No visible countdown or remaining-message indicator anywhere, ever.
-- The gate is an offer, never a wall. Email input is format-validated only,
-  accepted visually, never stored or transmitted (zero network calls, verified).
-- Any typed input advances the script (forgiving) — at the gate, email-shaped
-  text accepts, anything else declines; empty/whitespace is ignored.
+- **The gate is a wall** (Leann, 2026-08-20). A valid email is required to
+  continue — the decline path and Turn 11b provisional re-offer were removed.
+  Email input is format-validated only, accepted visually, never stored or
+  transmitted (zero network calls, verified). The main composer is disabled
+  while the gate is open so the only way forward is the inline email field.
+- Any typed input advances the script (forgiving) EXCEPT at the gate, where a
+  valid email is required. Empty/whitespace input is ignored everywhere.
 - ALL legal copy is placeholder pending Legal review (comment at top of
   guideScript.js + persistent disclosure line in the chat UI, marked
   PLACEHOLDER PENDING LEGAL).
@@ -134,6 +137,102 @@ reachable in all three):
 | 4 — Floating Message Bar | BUILT (expand-on-focus revision) |
 | 5 — Chat Widget | BUILT |
 | 6 — Maze readiness + deploy | QA COMPLETE, DEPLOYED |
+| 7 — Hifi (Stratos) exposure | Message Bar surfaced at `/maze/hifi/message-bar` |
+| 8 — Gate → wall (Leann) | Decline chip + Turn 11b re-offer removed; email required to continue |
+| 9 — Hifi polish + Zoom widget | Bubble/AI-badge colour pass, DS-compliant invalid-email state, static Zoom/TalkDesk widget on the hifi route |
+
+**Phase 7 — Hifi Stratos DS exposure.** Team selected the Floating Message Bar
+as the direction, so we added a hifi surface for it *without touching* the three
+greyscale routes. Implementation is deliberately minimal because the architecture
+was built for this: the wireframe skin is a single `wireframe` class on `<html>`
+(set in index.html) that overrides Stratos color tokens to greys. The new route
+`/maze/hifi/message-bar` renders the same `MessageBarShell` wrapped in
+`HifiMessageBarRoute` (src/pages/messageBar/HifiMessageBarRoute.jsx), which uses
+`useLayoutEffect` to remove the `wireframe` class from `<html>` on mount and
+restore it on unmount. Navigating away from the hifi route puts greyscale back
+exactly as it was — verified by loading `/maze/message-bar`, `/maze/full-page`,
+and `/maze/chat-widget` after visiting the hifi route and confirming they render
+in greyscale.
+
+Zero duplication: the engine, script, gate logic, mobile behavior, and shell
+component are shared. Any future copy or logic change in `guideScript.js` or
+`src/engine/*` updates greyscale and hifi in lockstep. IndexPage was split into
+two labeled sections — "Wireframe (greyscale)" (three form factors) and
+"Hifi (Stratos)" (Floating Message Bar) — so stakeholders can be sent the
+correct link.
+
+Files touched: `src/App.jsx` (one new route), `src/pages/IndexPage.jsx` +
+`.module.css` (section labels + hifi card), `src/pages/messageBar/HifiMessageBarRoute.jsx` (new).
+
+**Phase 8 — Gate becomes a wall (Leann, 2026-08-20).** The purpose of the chat
+interaction is to capture the user's email, so the "No thanks, keep it in the
+chat" decline chip was removed and a valid email is now required to continue
+past Turn 4. The Turn 11b provisional re-offer was removed with it — it only
+ever played on the decline path. This change lives in the shared engine + shared
+script, so it applies to all four routes (three greyscale + one hifi) — a
+project-level PM decision, not a per-form-factor one.
+
+What changed in code:
+- `guideScript.js`: removed `GATE_DECLINE_LABEL` and `PROVISIONAL_RE_OFFER_ENABLED`;
+  flattened Turn 5's `gateAccepted` / `gateDeclined` branches into a single
+  post-gate response; removed Turn 11b entirely.
+- `useConversation.js`: removed `declineGate`, `reOfferOpen` state, and the
+  `gateDecline` action; `sendText` now no-ops while the gate is open.
+- `scriptedBrain.js`: removed `gateDecline` handling, the branch resolver, the
+  provisional-turn skipping logic, and the `gateChoice`/`reOffer` state.
+- `ConversationEngine.jsx`: removed the decline button from the gate card;
+  disabled the main composer while the gate is open (so the inline email field
+  is the only way forward).
+- `engine.module.css`: removed the unused `.gateDecline` style.
+
+QA implication: Phase 6's decline-branch assertions no longer apply and will
+need to be removed if/when the QA suite is re-run — the 3 accept-path passes
+still hold. Nothing else in the script changed.
+
+**Phase 9 — Hifi polish + Zoom widget coexistence.** Four visual/interaction
+refinements on the hifi surface:
+
+1. **Chat bubble colours.** Elle bubble → `--color-neutral-warm-100` (#F4F2F0);
+   user bubble → `--color-primary-light-purple` (#EEF1FF) with `gray-900` text
+   (flipped from the previous dark bubble + white text). Contrast: 12.2:1 and
+   12.1:1 respectively (WCAG AAA). To keep the greyscale routes visually
+   distinct — a light-purple user bubble becomes gray-400 in wireframe and
+   would collapse into the light Elle bubble — the change is wired through
+   NEW `--color-bubble-elle-bg / -text` and `--color-bubble-user-bg / -text`
+   tokens (design-tokens.css); wireframe.css overrides them back to the
+   original dark-user / light-elle pair. Engine.module.css consumes the tokens
+   directly.
+2. **AI badge (Message Bar header).** Background → light-purple, text →
+   `--color-accent-primary-text`. 5.8:1 contrast (WCAG AA at 12px). Wireframe
+   inherits the greys automatically.
+3. **Invalid-email state now renders our own design-system error** (thin red
+   border + `ⓘ Please enter a valid email address` in `--color-status-error`)
+   instead of the browser's native tooltip. Fix: `noValidate` on the gate form
+   so our regex is the only validator that runs — matches Kaitlyn's DS
+   reference exactly. Applies to all routes (shared engine), but wireframe
+   naturally renders the red border as grey via token overrides.
+4. **Static Zoom / TalkDesk widget placeholder** in the bottom-right corner —
+   the LegalShield production customer-service widget, mocked in so
+   stakeholders can see how the two entry points coexist on the page.
+   `ZoomWidgetPlaceholder.jsx` (~56px dark-purple circle with a white
+   chat-bubble SVG), `pointer-events: none`, `z-index: 85`. **Hifi route
+   only** — rendered directly in `HifiMessageBarRoute` alongside
+   `MessageBarShell`, not in the shell itself, so it doesn't appear on the
+   three greyscale routes. Desktop: `bottom: 24px, right: 24px` (matches
+   production). Mobile (< 768px): `bottom: 108px, right: 16px` — nudged above
+   the floating pill so both entry points remain visible and tappable rather
+   than colliding (Kaitlyn's call: design a real solution, don't just expose
+   the problem). When the mobile chat sheet opens (`z-index: 120`) the widget
+   disappears behind it, which is the correct production behavior.
+
+Files touched:
+- `design-tokens.css` — new bubble token block
+- `src/wireframe.css` — pin bubble tokens to greyscale values
+- `src/engine/engine.module.css` — bubbles reference the new tokens
+- `src/engine/ConversationEngine.jsx` — `noValidate` on the gate form
+- `src/pages/messageBar/MessageBarShell.module.css` — AI badge colour swap
+- `src/pages/messageBar/ZoomWidgetPlaceholder.jsx` + `.module.css` — NEW
+- `src/pages/messageBar/HifiMessageBarRoute.jsx` — renders the placeholder
 
 **Phase 1 —** Traced imports, removed doc-review pages/CTAs (Nav +
 MobileMenuOverlay), cut MobileFunnelSections (doc-review funnel), added
@@ -211,7 +310,6 @@ engine's own composer + disclosure inside the panel per the references.
   Turn 11 [LEANN VERBATIM] two-CTA line ("See plans" / "Talk to an attorney").
   Worth reconciling with Leann.**
 - All legal content (per the file-top comment) pending Legal review
-- The Turn 11b re-offer itself is PROVISIONAL pending Leann
 
 **Verification Claude can't do:**
 - Real-phone pass on the three `/maze/*` links (iOS Safari dynamic viewport vs.

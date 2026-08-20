@@ -1,0 +1,28 @@
+/* Static Zoom / TalkDesk placeholder — matches production position and size.
+   Sits below the mobile chat sheet (z-index 120) so it disappears while chat
+   is open, and below the desktop message bar dock (90) as a safety margin.
+   Mobile: nudged above the floating pill + disclosure so both entry points
+   stay visible and clearly separated. */
+
+.widget {
+  position: fixed;
+  bottom: 24px;
+  right: 24px;
+  width: 56px;
+  height: 56px;
+  border-radius: 50%;
+  background: #2C1178;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  box-shadow: 0 6px 16px rgba(29, 14, 96, 0.25);
+  z-index: 85;
+  pointer-events: none;
+}
+
+@media (max-width: 767px) {
+  .widget {
+    bottom: 108px;
+    right: 16px;
+  }
+}

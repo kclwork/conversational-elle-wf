@@ -11,12 +11,14 @@
 //               Reference only — ANY typed input advances the script (forgiving by design).
 //   blocks:     (elle turns) content blocks: { type:'p', text } | { type:'bullets', items:[] }
 //               | { type:'ctaRow', ctas:[{label, style}] }
-//   moments:    flags: 'gate' | 'headsUp' | 'scopeClose' | 'handoff' | 'provisionalReOffer'
+//   moments:    flags: 'gate' | 'headsUp' | 'scopeClose' | 'handoff'
 //               ('safetyEscalation' is reserved in the engine — content pending Trust & Safety)
-//   branches:   (turn 5) gateAccepted / gateDeclined — both reconverge after one line.
-
-// PROVISIONAL (pending Leann): flip to false to remove the Turn 11b re-offer entirely.
-export const PROVISIONAL_RE_OFFER_ENABLED = true
+//
+// Gate policy (Leann, 2026-08-20): the email gate is a WALL — a valid email is
+// required to continue. The decline path was removed (there was previously a
+// "No thanks, keep it in the chat" chip and a `gateDeclined` branch); the Turn
+// 11b provisional re-offer was removed with it because it only ever played on
+// the decline path.
 
 // PLACEHOLDER PENDING LEGAL — persistent disclosure line, identical across all three form factors.
 export const DISCLOSURE_TEXT = 'Elle provides general legal information, not legal advice.'
@@ -24,7 +26,6 @@ export const DISCLOSURE_TEXT = 'Elle provides general legal information, not leg
 // Composer placeholder — identical across all three form factors (entry aids must not differ).
 export const INPUT_PLACEHOLDER = 'Ask Elle a legal question…'
 
-export const GATE_DECLINE_LABEL = 'No thanks, keep it in the chat'
 export const GATE_EMAIL_PLACEHOLDER = 'Email address'
 
 // Opening greeting — Elle narrates the deal (educational guidance, not legal
@@ -90,19 +91,10 @@ export const guideScript = [
   {
     id: 't5',
     role: 'elle',
-    // THE GATE — a real choice; both paths visibly continue and reconverge after one line.
-    branches: {
-      gateAccepted: {
-        blocks: [
-          { type: 'p', text: `Sent! Check your inbox in a few minutes — it'll have everything we've covered plus the attorney question list, and I'll keep it updated as we go. Now, back to your deposit. What else can I walk you through?` },
-        ],
-      },
-      gateDeclined: {
-        blocks: [
-          { type: 'p', text: `No problem — everything stays right here in the chat. What else can I walk you through?` },
-        ],
-      },
-    },
+    // POST-GATE — a valid email is required to reach this line (the gate is a wall).
+    blocks: [
+      { type: 'p', text: `Sent! Check your inbox in a few minutes — it'll have everything we've covered plus the attorney question list, and I'll keep it updated as we go. Now, back to your deposit. What else can I walk you through?` },
+    ],
   },
   {
     id: 't6',
@@ -170,24 +162,5 @@ export const guideScript = [
         { label: 'Subscribe to speak to a lawyer', style: 'primary' },
       ] },
     ],
-  },
-  {
-    id: 't11b',
-    role: 'elle',
-    // PROVISIONAL RE-OFFER (pending Leann) — plays only if the user declined at Turn 5,
-    // and only while PROVISIONAL_RE_OFFER_ENABLED is true. Keep isolated for one-line removal.
-    provisional: true,
-    onlyIf: 'gateDeclined',
-    moments: ['provisionalReOffer'],
-    blocks: [
-      { type: 'p', text: `One more offer before you go: want me to email you this recap and the question list? It'll be ready when you sit down with the attorney.` },
-    ],
-    // Confirmation shown if the user accepts the re-offer. Either way, the
-    // conversation ends at the handoff state. PLACEHOLDER copy pending Leann.
-    acceptConfirmation: {
-      blocks: [
-        { type: 'p', text: `Sent! It'll be in your inbox in a few minutes — the recap plus the question list, ready for when you sit down with the attorney.` },
-      ],
-    },
   },
 ]

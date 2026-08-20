@@ -20,9 +20,13 @@ factor. No environment variables needed.
 
 **https://conversational-elle-wf.vercel.app** — Maze deep links:
 
+Wireframe (greyscale):
 - `/maze/full-page`
 - `/maze/message-bar`
 - `/maze/chat-widget`
+
+Hifi (Stratos DS):
+- `/maze/hifi/message-bar` — team-selected direction
 
 Pushing to `main` triggers a redeploy. No environment variables; `vercel.json`
 rewrites all paths to `index.html` so the deep links resolve.
@@ -56,11 +60,18 @@ src/
 | Route | What it is |
 |---|---|
 | `/` | Index — "Start demo" per form factor + build tools |
-| `/maze/full-page` (+`/chat`) | Full Page form factor |
-| `/maze/message-bar` | Floating Message Bar |
-| `/maze/chat-widget` | Chat Widget |
+| `/maze/full-page` (+`/chat`) | Full Page (wireframe) |
+| `/maze/message-bar` | Floating Message Bar (wireframe) |
+| `/maze/chat-widget` | Chat Widget (wireframe) |
+| `/maze/hifi/message-bar` | **Floating Message Bar (Stratos DS hifi)** |
 | `/maze/engine` | Bare-container engine demo |
 | `/homepage` | Pruned host homepage |
+
+The hifi route reuses the same `MessageBarShell` — a wrapper
+(`HifiMessageBarRoute`) removes the `wireframe` class from `<html>` while
+mounted, so the shared Stratos tokens render in full colour. Navigating away
+restores the class. Zero duplication; the engine and script stay shared with the
+three greyscale routes.
 
 Old non-maze paths (`/full-page`, `/message-bar`, …) redirect to the `/maze/*`
 equivalents.
@@ -70,8 +81,7 @@ equivalents.
 | To change… | Edit |
 |---|---|
 | Any conversation copy (greeting, script turns, CTA, disclosure, placeholder) | `src/data/guideScript.js` — never components |
-| Wireframe → hifi | Delete `class="wireframe"` from `index.html` |
-| Remove the provisional Turn 11b re-offer | `PROVISIONAL_RE_OFFER_ENABLED = false` in `guideScript.js` |
+| Wireframe → hifi | Delete `class="wireframe"` from `index.html` (or use `/maze/hifi/message-bar` which toggles it per-route) |
 | Anything shared by all three form factors (bubbles, gate card, typing, composer) | `src/engine/` — changes apply everywhere by design |
 | One form factor's container only | its folder under `src/pages/` |
 

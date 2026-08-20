@@ -49,6 +49,14 @@ html.wireframe {
   /* Theme accents → greys (no colour hints anywhere, incl. Elle entry points) */
   --theme-accent-primary-text: rgba(84, 87, 92, 1);
   --theme-accent-subtle-bg: rgba(244, 244, 245, 1);
+
+  /* Chat bubbles — preserve the greyscale treatment (dark user bubble, light
+     elle bubble) instead of inheriting hifi's warm/light-purple pairing, which
+     would collapse into two near-identical light greys in wireframe. */
+  --color-bubble-elle-bg: var(--color-neutral-gray-300);
+  --color-bubble-elle-text: var(--color-text-primary);
+  --color-bubble-user-bg: var(--color-action-secondary-default);
+  --color-bubble-user-text: var(--color-text-inverse);
 }
 
 /* Photos, logos, and hardcoded-colour SVGs (e.g. the footer flag) go grey too */

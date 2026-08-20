@@ -21,8 +21,7 @@ export default function useConversation(brain) {
     { id: mid(), role: 'elle', blocks: OPENING_MESSAGE.blocks, moments: [] },
   ])
   const [typing, setTyping] = useState(false)
-  const [gateOpen, setGateOpen] = useState(false)     // inline email/decline choice visible
-  const [reOfferOpen, setReOfferOpen] = useState(false) // provisional re-offer input visible
+  const [gateOpen, setGateOpen] = useState(false)
   const [ended, setEnded] = useState(false)
   // Reserved: safety escalation exits all gates and caps. Content pending Trust & Safety —
   // placeholder state only, no UI yet.
@@ -39,7 +38,6 @@ export default function useConversation(brain) {
       setMessages(prev => [...prev, { id: mid(), role: 'elle', ...msg }])
     }
     setGateOpen(result.gate)
-    setReOfferOpen(result.reOffer)
     if (result.ended) setEnded(true)
   }, [])
 
@@ -55,53 +53,34 @@ export default function useConversation(brain) {
     }
   }, [brain, playResult])
 
-  // Main composer input. At the gate (and the re-offer), typed input still
-  // works: email-shaped text accepts the offer (format-only validation;
-  // accepted visually — nothing is stored or transmitted); anything else
-  // declines, and the conversation visibly continues either way.
+  // Main composer input. The gate is a wall — while it's open, the composer is
+  // disabled at the UI level, so this callback only fires for normal turns.
   const sendText = useCallback(text => {
     const trimmed = text.trim()
-    if (!trimmed || ended) return
+    if (!trimmed || ended || gateOpen) return
     setMessages(prev => [...prev, { id: mid(), role: 'user', blocks: [{ type: 'p', text: trimmed }] }])
-
-    if (gateOpen || reOfferOpen) {
-      setGateOpen(false)
-      setReOfferOpen(false)
-      dispatch({ type: EMAIL_RE.test(trimmed) ? 'gateAccept' : 'gateDecline' })
-      return
-    }
-
     dispatch({ type: 'text', text: trimmed })
-  }, [dispatch, ended, gateOpen, reOfferOpen])
+  }, [dispatch, ended, gateOpen])
 
-  // Inline gate card actions (email field submit / decline chip).
-  // Format-only validation — an invalid email shows the card's inline error
-  // state (returns false); a valid one is accepted visually and goes nowhere.
+  // Inline gate card submit. Format-only validation — an invalid email keeps
+  // the card in its inline-error state (returns false); a valid one is accepted
+  // visually and goes nowhere. Nothing is stored or transmitted.
   const acceptGate = useCallback(email => {
     const trimmed = (email || '').trim()
     if (!EMAIL_RE.test(trimmed)) return false
     setMessages(prev => [...prev, { id: mid(), role: 'user', blocks: [{ type: 'p', text: trimmed }] }])
     setGateOpen(false)
-    setReOfferOpen(false)
     dispatch({ type: 'gateAccept' })
     return true
-  }, [dispatch])
-
-  const declineGate = useCallback(() => {
-    setGateOpen(false)
-    setReOfferOpen(false)
-    dispatch({ type: 'gateDecline' })
   }, [dispatch])
 
   return {
     messages,
     typing,
     gateOpen,
-    reOfferOpen,
     ended,
     escalation,
     sendText,
     acceptGate,
-    declineGate,
   }
 }

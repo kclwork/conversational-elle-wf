@@ -1,10 +1,10 @@
-// Internal navigation index — links every variant (3 form factors × live/scripted).
-// Maze participants never see this; they get deep-linked to one /maze/* route.
+// Internal navigation index — links every variant.
+// Maze participants never see this; they get deep-linked to one route.
 
 import { Link } from 'react-router-dom'
 import styles from './IndexPage.module.css'
 
-const VARIANTS = [
+const WIREFRAME_VARIANTS = [
   {
     name: 'Full Page',
     desc: 'Dedicated conversation page, reached via the "Ask Elle" CTA in the homepage nav.',
@@ -22,6 +22,14 @@ const VARIANTS = [
   },
 ]
 
+const HIFI_VARIANTS = [
+  {
+    name: 'Floating Message Bar',
+    desc: 'Team-selected direction, rendered in Stratos DS. Same shell as the wireframe route — the greyscale skin is turned off while this route is mounted.',
+    demo: '/maze/hifi/message-bar',
+  },
+]
+
 export default function IndexPage() {
   return (
     <div className={styles.page}>
@@ -33,8 +41,22 @@ export default function IndexPage() {
           Colorado security-deposit conversation — any typed input advances it.
         </p>
 
+        <p className={styles.sectionLabel}>Wireframe (greyscale)</p>
         <div className={styles.grid}>
-          {VARIANTS.map(v => (
+          {WIREFRAME_VARIANTS.map(v => (
+            <div key={v.name} className={styles.card}>
+              <h2 className={styles.cardTitle}>{v.name}</h2>
+              <p className={styles.cardDesc}>{v.desc}</p>
+              <div className={styles.cardLinks}>
+                <Link className={styles.linkPrimary} to={v.demo}>Start demo</Link>
+              </div>
+            </div>
+          ))}
+        </div>
+
+        <p className={styles.sectionLabel}>Hifi (Stratos)</p>
+        <div className={styles.grid}>
+          {HIFI_VARIANTS.map(v => (
             <div key={v.name} className={styles.card}>
               <h2 className={styles.cardTitle}>{v.name}</h2>
               <p className={styles.cardDesc}>{v.desc}</p>

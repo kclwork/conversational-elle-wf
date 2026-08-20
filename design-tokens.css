@@ -116,6 +116,12 @@
   --color-accent-primary-text: var(--color-primary-purple);
   --color-accent-subtle-bg: var(--color-primary-light-purple);
 
+  /* Semantic: Chat bubbles (wireframe.css overrides these back to greyscale) */
+  --color-bubble-elle-bg: var(--color-neutral-warm-100);
+  --color-bubble-elle-text: var(--color-text-primary);
+  --color-bubble-user-bg: var(--color-primary-light-purple);
+  --color-bubble-user-text: var(--color-text-primary);
+
   /* Semantic: Action / Primary */
   --color-action-primary-default: var(--color-action-default);
   --color-action-primary-hover: var(--color-action-hover);

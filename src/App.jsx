@@ -5,6 +5,7 @@ import ResponsiveHomepage from './pages/ResponsiveHomepage.jsx'
 import FullPageHost from './pages/fullPage/FullPageHost.jsx'
 import FullPageChat from './pages/fullPage/FullPageChat.jsx'
 import MessageBarShell from './pages/messageBar/MessageBarShell.jsx'
+import HifiMessageBarRoute from './pages/messageBar/HifiMessageBarRoute.jsx'
 import ChatWidgetShell from './pages/chatWidget/ChatWidgetShell.jsx'
 
 // Route plan — scripted (Maze) mode only; live mode was removed (no API access).
@@ -32,6 +33,10 @@ export default function App() {
 
         {/* Form factor 2 — Floating Message Bar */}
         <Route path="/maze/message-bar" element={<MessageBarShell />} />
+
+        {/* Hifi (Stratos DS) — Floating Message Bar. Same shell, wireframe skin
+            disabled while this route is mounted. */}
+        <Route path="/maze/hifi/message-bar" element={<HifiMessageBarRoute />} />
 
         {/* Form factor 3 — Chat Widget */}
         <Route path="/maze/chat-widget" element={<ChatWidgetShell />} />
