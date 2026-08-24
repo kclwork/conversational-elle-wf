@@ -6,6 +6,7 @@ import FullPageHost from './pages/fullPage/FullPageHost.jsx'
 import FullPageChat from './pages/fullPage/FullPageChat.jsx'
 import MessageBarShell from './pages/messageBar/MessageBarShell.jsx'
 import HifiMessageBarRoute from './pages/messageBar/HifiMessageBarRoute.jsx'
+import MazeTestSecurityDepositRoute from './pages/messageBar/MazeTestSecurityDepositRoute.jsx'
 import ChatWidgetShell from './pages/chatWidget/ChatWidgetShell.jsx'
 
 // Route plan — scripted (Maze) mode only; live mode was removed (no API access).
@@ -37,6 +38,11 @@ export default function App() {
         {/* Hifi (Stratos DS) — Floating Message Bar. Same shell, wireframe skin
             disabled while this route is mounted. */}
         <Route path="/maze/hifi/message-bar" element={<HifiMessageBarRoute />} />
+
+        {/* Maze usability-test route — hifi Message Bar wrapped with silent
+            URL updates at gate-accept and handoff-CTA moments. Additive; does
+            not modify /maze/hifi/message-bar. */}
+        <Route path="/maze/test/security-deposit" element={<MazeTestSecurityDepositRoute />} />
 
         {/* Form factor 3 — Chat Widget */}
         <Route path="/maze/chat-widget" element={<ChatWidgetShell />} />

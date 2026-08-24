@@ -27,7 +27,7 @@ import {
 } from '../../data/guideScript.js'
 import styles from './MessageBarShell.module.css'
 
-export default function MessageBarShell() {
+export default function MessageBarShell({ onGateAccept, onHandoff } = {}) {
   const brain = useMemo(() => createScriptedBrain(), [])
   const [expanded, setExpanded] = useState(false)
   const [started, setStarted] = useState(false) // a first message has been sent
@@ -91,6 +91,10 @@ export default function MessageBarShell() {
   // The shell also flips to its post-subscribe surface: the pill placeholder
   // changes and, when reopened, the composer is read-only (see engine props).
   function handleCta() {
+    // Optional side-channel for maze-test routes (silent URL updates, analytics).
+    // No-op when the prop is unset — /maze/hifi/message-bar and /maze/message-bar
+    // don't pass one, so their behavior is byte-for-byte identical.
+    onHandoff?.()
     setSubscribed(true)
     setExpanded(false)
     const scrollToPlans = behavior =>
@@ -136,6 +140,7 @@ export default function MessageBarShell() {
           <ConversationEngine
             brain={brain}
             onCta={handleCta}
+            onGateAccept={onGateAccept}
             placeholder={
               // Post-subscribe state:
               //  - collapsed pill: "Revisit your conversation with Elle"

@@ -52,7 +52,7 @@ function GateCard({ onAccept }) {
   )
 }
 
-export default function ConversationEngine({ brain, onCta, placeholder }) {
+export default function ConversationEngine({ brain, onCta, placeholder, onGateAccept }) {
   const convo = useConversation(brain)
   const [draft, setDraft] = useState('')
   const scrollRef = useRef(null)
@@ -110,7 +110,16 @@ export default function ConversationEngine({ brain, onCta, placeholder }) {
 
           {convo.gateOpen && !convo.typing && (
             <div className={styles.elleRow}>
-              <GateCard onAccept={convo.acceptGate} />
+              <GateCard
+                onAccept={email => {
+                  const ok = convo.acceptGate(email)
+                  // Optional side-channel for maze-test routes that need to fire
+                  // once the email is accepted (silent URL updates, analytics, …).
+                  // Other routes leave the prop unset — behavior is unchanged.
+                  if (ok) onGateAccept?.()
+                  return ok
+                }}
+              />
             </div>
           )}
         </div>
