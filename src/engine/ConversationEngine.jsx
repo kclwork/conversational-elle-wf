@@ -52,7 +52,7 @@ function GateCard({ onAccept }) {
   )
 }
 
-export default function ConversationEngine({ brain, onCta }) {
+export default function ConversationEngine({ brain, onCta, placeholder }) {
   const convo = useConversation(brain)
   const [draft, setDraft] = useState('')
   const scrollRef = useRef(null)
@@ -121,7 +121,7 @@ export default function ConversationEngine({ brain, onCta }) {
           <input
             type="text"
             className={styles.input}
-            placeholder={INPUT_PLACEHOLDER}
+            placeholder={placeholder || INPUT_PLACEHOLDER}
             value={draft}
             onChange={e => setDraft(e.target.value)}
             disabled={composerDisabled}

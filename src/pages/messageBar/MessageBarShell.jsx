@@ -20,12 +20,18 @@ import ResponsiveHomepage from '../ResponsiveHomepage.jsx'
 import ConversationEngine from '../../engine/ConversationEngine.jsx'
 import { createScriptedBrain } from '../../engine/brains/scriptedBrain.js'
 import useIsMobile from '../../hooks/useIsMobile.js'
+import {
+  PILL_PLACEHOLDER_IN_SESSION,
+  PILL_PLACEHOLDER_POST_SUBSCRIBE,
+  READONLY_INPUT_PLACEHOLDER,
+} from '../../data/guideScript.js'
 import styles from './MessageBarShell.module.css'
 
 export default function MessageBarShell() {
   const brain = useMemo(() => createScriptedBrain(), [])
   const [expanded, setExpanded] = useState(false)
   const [started, setStarted] = useState(false) // a first message has been sent
+  const [subscribed, setSubscribed] = useState(false) // handoff CTA was clicked
   const isMobile = useIsMobile()
   const dockRef = useRef(null)
 
@@ -82,7 +88,10 @@ export default function MessageBarShell() {
 
   // Handoff CTAs: minimize and scroll the host homepage to the plans section
   // in place. The engine stays mounted, so the conversation stays accessible.
+  // The shell also flips to its post-subscribe surface: the pill placeholder
+  // changes and, when reopened, the composer is read-only (see engine props).
   function handleCta() {
+    setSubscribed(true)
     setExpanded(false)
     const scrollToPlans = behavior =>
       document.getElementById('plans')?.scrollIntoView({ behavior, block: 'start' })
@@ -124,7 +133,21 @@ export default function MessageBarShell() {
           onFocusCapture={handleFocusCapture}
           onPointerDownCapture={handlePointerDownCapture}
         >
-          <ConversationEngine brain={brain} onCta={handleCta} />
+          <ConversationEngine
+            brain={brain}
+            onCta={handleCta}
+            placeholder={
+              // Post-subscribe state:
+              //  - collapsed pill: "Revisit your conversation with Elle"
+              //  - expanded (read-only chat): "Ask Elle a question..."
+              // In-session state:
+              //  - collapsed pill: "Continue your conversation with Elle…"
+              //  - expanded: default composer copy from the engine
+              subscribed
+                ? (expanded ? READONLY_INPUT_PLACEHOLDER : PILL_PLACEHOLDER_POST_SUBSCRIBE)
+                : (!expanded && started ? PILL_PLACEHOLDER_IN_SESSION : undefined)
+            }
+          />
         </div>
       </div>
     </div>

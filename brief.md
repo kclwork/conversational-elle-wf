@@ -9,7 +9,7 @@ plain-language) — Decision 2, form factor test. One variable per test: voice,
 conversation content, and entry aids are identical across all three form factors.
 Only the container changes.
 
-**Status: Phases 1–9 built and deployed. Phases 1–6 QA'd. Phases 7–9 verified
+**Status: Phases 1–11 built and deployed. Phases 1–6 QA'd. Phases 7–11 verified
 locally; no formal QA re-run yet (Phase 6's decline-branch assertions no longer
 apply — see Phase 8).**
 Live: **https://conversational-elle-wf.vercel.app**
@@ -146,6 +146,7 @@ reachable in all three):
 | 8 — Gate → wall (Leann) | Decline chip + Turn 11b re-offer removed; email required to continue |
 | 9 — Hifi polish + Zoom widget | Bubble/AI-badge colour pass, DS-compliant invalid-email state, static Zoom/TalkDesk widget on the hifi route |
 | 10 — Wider expanded panel (Leann) | Desktop panel widens 640 → 800 on expand; pill stays 640 |
+| 11 — Post-first-send pill states | State 09 in-session pill, state 08 post-subscribe pill, state 10 read-only reopened chat |
 
 **Phase 7 — Hifi Stratos DS exposure.** Team selected the Floating Message Bar
 as the direction, so we added a hifi surface for it *without touching* the three
@@ -239,6 +240,45 @@ Files touched:
 - `src/pages/messageBar/MessageBarShell.module.css` — AI badge colour swap
 - `src/pages/messageBar/ZoomWidgetPlaceholder.jsx` + `.module.css` — NEW
 - `src/pages/messageBar/HifiMessageBarRoute.jsx` — renders the placeholder
+
+**Phase 11 — Post-first-send pill states (Kaitlyn, 2026-08-24).** Three new
+placeholder-driven shell states on the hifi Floating Message Bar. All are
+prop-driven — engine and other three form factors untouched.
+
+| Shell state | Trigger | Pill placeholder | Composer inside chat |
+|---|---|---|---|
+| 01 idle | initial load | `Ask Elle a legal question…` | n/a (collapsed) |
+| 09 in-session collapsed | user has sent at least one message, then clicks the caret to minimize | `Continue your conversation with Elle…` | on reopen, default engine copy, enabled |
+| 08 post-subscribe collapsed | handoff CTA clicked → scrolls to `#plans`, pill re-emerges on the pricing page | `Revisit your conversation with Elle` | (see state 10 on reopen) |
+| 10 read-only reopened | user clicks the pricing-page pill to revisit history | n/a (pill) | `Ask Elle a question...` — input + send disabled |
+
+Implementation:
+- `src/data/guideScript.js` — three new copy constants
+  (`PILL_PLACEHOLDER_IN_SESSION`, `PILL_PLACEHOLDER_POST_SUBSCRIBE`,
+  `READONLY_INPUT_PLACEHOLDER`). All copy still lives in one file.
+- `src/engine/ConversationEngine.jsx` — accepts an optional `placeholder` prop,
+  falls back to `INPUT_PLACEHOLDER` when not supplied. The three greyscale
+  routes don't pass it, so they're identical to before.
+- `src/pages/messageBar/MessageBarShell.jsx` — adds a `subscribed` boolean
+  (set true inside `handleCta`) and computes the dynamic placeholder from
+  `expanded` / `started` / `subscribed`. Precedence: `subscribed` outranks
+  `started` because reaching the handoff CTA implies the conversation is done.
+
+State 10's disabled composer is a happy accident of the existing engine
+behavior: `handleCta` fires → brain returns `ended: true` → engine sets
+`composerDisabled = ended || gateOpen`, so the input + send are already
+disabled once the CTA fires. Phase 11 only adds the correct placeholder copy
+on top. Read-only state persists across minimize/reopen automatically because
+`subscribed` lives on the shell, not the engine.
+
+The state 08 pill LOOKS enabled (per spec — Kaitlyn: "in default clickable
+state, NOT disabled"): the send arrow's disabled tint matches the state 01
+empty-composer tint, so the pill reads as idle-clickable. The click still
+reopens the panel via the existing `input:disabled { pointer-events: none }`
+CSS rule + `handlePointerDownCapture` on the shell wrapper.
+
+Mobile parity: same shell, same prop-driven logic — the full-screen sheet on
+< 768px picks up all three new states automatically.
 
 **Phase 10 — Wider expanded panel (Leann, 2026-08-20).** Long Elle responses
 were feeling cramped in the desktop panel. Widened the panel from 640 → 800px

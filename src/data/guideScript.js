@@ -26,6 +26,14 @@ export const DISCLOSURE_TEXT = 'Elle provides general legal information, not leg
 // Composer placeholder — identical across all three form factors (entry aids must not differ).
 export const INPUT_PLACEHOLDER = 'Ask Elle a legal question…'
 
+// Message Bar pill placeholders for post-first-send shell states (hifi Floating
+// Message Bar only — the other form factors don't minimize an active session
+// back to a pill). Kept here so all copy lives in one file.
+export const PILL_PLACEHOLDER_IN_SESSION = 'Continue your conversation with Elle…'
+export const PILL_PLACEHOLDER_POST_SUBSCRIBE = 'Revisit your conversation with Elle'
+// Placeholder used inside the read-only chat after subscribe.
+export const READONLY_INPUT_PLACEHOLDER = 'Ask Elle a question...'
+
 export const GATE_EMAIL_PLACEHOLDER = 'Email address'
 
 // Opening greeting — Elle narrates the deal (educational guidance, not legal
