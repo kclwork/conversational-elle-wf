@@ -14,15 +14,20 @@ const wait = ms => new Promise(r => setTimeout(r, ms))
 let nextId = 1
 const mid = () => `m${nextId++}`
 
-export default function useConversation(brain) {
+export default function useConversation(brain, { initialMessages, initialEnded } = {}) {
   // Elle's opening greeting is present on load — identical in both brains and
-  // across all three form factors.
-  const [messages, setMessages] = useState(() => [
-    { id: mid(), role: 'elle', blocks: OPENING_MESSAGE.blocks, moments: [] },
-  ])
+  // across all three form factors. `initialMessages`, when supplied, replaces
+  // the greeting-only seed with a full history (used by the maze-test resume
+  // paths so Maze can reload mid-conversation without wiping state).
+  const [messages, setMessages] = useState(() => {
+    const seed = initialMessages && initialMessages.length
+      ? initialMessages
+      : [{ role: 'elle', blocks: OPENING_MESSAGE.blocks, moments: [] }]
+    return seed.map(m => ({ id: mid(), ...m }))
+  })
   const [typing, setTyping] = useState(false)
   const [gateOpen, setGateOpen] = useState(false)
-  const [ended, setEnded] = useState(false)
+  const [ended, setEnded] = useState(!!initialEnded)
   // Reserved: safety escalation exits all gates and caps. Content pending Trust & Safety —
   // placeholder state only, no UI yet.
   const [escalation] = useState(null)

@@ -13,11 +13,13 @@
 
 import { guideScript } from '../../data/guideScript.js'
 
-export function createScriptedBrain() {
+export function createScriptedBrain({ startIndex = 0 } = {}) {
   // Pointer into the ordered turn array. Forgiving by design: ANY typed input
   // advances the script — nobody ever gets stuck at a dead input (except at the
   // gate, which is a wall by design and requires a valid email).
-  let index = 0
+  // `startIndex` is used by the maze-test resume paths to drop the cursor
+  // partway through the script when the chat is pre-populated with history.
+  let index = startIndex
 
   function collectElleTurns() {
     const messages = []

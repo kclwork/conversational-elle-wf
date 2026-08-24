@@ -16,10 +16,11 @@
 // Same hifi skin toggle as HifiMessageBarRoute: remove the `wireframe` class
 // from <html> while mounted, restore it on unmount.
 
-import { useCallback, useEffect, useLayoutEffect } from 'react'
-import { useNavigate } from 'react-router-dom'
+import { useCallback, useEffect, useLayoutEffect, useMemo } from 'react'
+import { useNavigate, useSearchParams } from 'react-router-dom'
 import MessageBarShell from './MessageBarShell.jsx'
 import ZoomWidgetPlaceholder from './ZoomWidgetPlaceholder.jsx'
+import { buildResumeState } from './mazeTestResume.js'
 
 const BASE_PATH = '/maze/test/security-deposit'
 
@@ -59,6 +60,14 @@ const MAZE_SNIPPET_SRC = `<script>
 
 export default function MazeTestSecurityDepositRoute() {
   const navigate = useNavigate()
+  const [searchParams] = useSearchParams()
+
+  // Resume state is captured once at first render — Maze reloads the URL
+  // between missions, so the stage on mount is the source of truth. Later
+  // in-session URL updates (post-gate → done via onGateAccept / onHandoff)
+  // must NOT re-seed the chat and wipe the participant's live state.
+  const initialStage = useMemo(() => searchParams.get('stage'), []) // eslint-disable-line react-hooks/exhaustive-deps
+  const resume = useMemo(() => buildResumeState(initialStage) || {}, [initialStage])
 
   useLayoutEffect(() => {
     const html = document.documentElement
@@ -102,9 +111,27 @@ export default function MazeTestSecurityDepositRoute() {
   const onGateAccept = useCallback(() => setStage('post-gate'), [setStage])
   const onHandoff = useCallback(() => setStage('done'), [setStage])
 
+  // For a fresh load at ?stage=done, mirror the natural post-CTA scroll —
+  // the participant should see the pricing section below the collapsed pill.
+  useEffect(() => {
+    if (initialStage !== 'done') return
+    const scrollToPlans = behavior =>
+      document.getElementById('plans')?.scrollIntoView({ behavior, block: 'start' })
+    const t1 = setTimeout(() => scrollToPlans('auto'), 100)
+    const t2 = setTimeout(() => {
+      const el = document.getElementById('plans')
+      if (el && Math.abs(el.getBoundingClientRect().top) > 80) scrollToPlans('auto')
+    }, 800)
+    return () => { clearTimeout(t1); clearTimeout(t2) }
+  }, [initialStage])
+
   return (
     <>
-      <MessageBarShell onGateAccept={onGateAccept} onHandoff={onHandoff} />
+      <MessageBarShell
+        onGateAccept={onGateAccept}
+        onHandoff={onHandoff}
+        {...resume}
+      />
       <ZoomWidgetPlaceholder />
     </>
   )

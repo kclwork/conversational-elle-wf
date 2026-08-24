@@ -27,11 +27,27 @@ import {
 } from '../../data/guideScript.js'
 import styles from './MessageBarShell.module.css'
 
-export default function MessageBarShell({ onGateAccept, onHandoff } = {}) {
-  const brain = useMemo(() => createScriptedBrain(), [])
-  const [expanded, setExpanded] = useState(false)
-  const [started, setStarted] = useState(false) // a first message has been sent
-  const [subscribed, setSubscribed] = useState(false) // handoff CTA was clicked
+export default function MessageBarShell({
+  onGateAccept,
+  onHandoff,
+  // Resume props — used by the maze-test route to seed a mid-conversation
+  // state on a fresh load (so Maze can reload between missions without
+  // wiping the chat). All optional; other routes leave them unset and
+  // behave exactly as before.
+  brainStartIndex = 0,
+  initialMessages,
+  initialExpanded = false,
+  initialStarted = false,
+  initialSubscribed = false,
+  initialEnded = false,
+} = {}) {
+  const brain = useMemo(
+    () => createScriptedBrain({ startIndex: brainStartIndex }),
+    [brainStartIndex],
+  )
+  const [expanded, setExpanded] = useState(initialExpanded)
+  const [started, setStarted] = useState(initialStarted) // a first message has been sent
+  const [subscribed, setSubscribed] = useState(initialSubscribed) // handoff CTA was clicked
   const isMobile = useIsMobile()
   const dockRef = useRef(null)
 
@@ -141,6 +157,8 @@ export default function MessageBarShell({ onGateAccept, onHandoff } = {}) {
             brain={brain}
             onCta={handleCta}
             onGateAccept={onGateAccept}
+            initialMessages={initialMessages}
+            initialEnded={initialEnded}
             placeholder={
               // Post-subscribe state:
               //  - collapsed pill: "Revisit your conversation with Elle"

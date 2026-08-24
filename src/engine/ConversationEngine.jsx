@@ -52,8 +52,15 @@ function GateCard({ onAccept }) {
   )
 }
 
-export default function ConversationEngine({ brain, onCta, placeholder, onGateAccept }) {
-  const convo = useConversation(brain)
+export default function ConversationEngine({
+  brain,
+  onCta,
+  placeholder,
+  onGateAccept,
+  initialMessages,
+  initialEnded,
+}) {
+  const convo = useConversation(brain, { initialMessages, initialEnded })
   const [draft, setDraft] = useState('')
   const scrollRef = useRef(null)
   const navigate = useNavigate()
